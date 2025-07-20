@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyPal AI</title>
+    <link rel="stylesheet" href="./style.css">
+    
+</head>
+<body>
+    <div class="header">
+        <h1>StudyPal AI</h1>
+    </div>
+
+    <div class="container main-content">
+        <!-- Chat Section -->
+        <div class="chat-section">
+            <div class="chat-header">
+                <div class="ai-avatar">🤖</div>
+                <h3>AI Study Assistant</h3>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai-message">
+                    Hi! I'm StudyPal AI. I'm here to help you stay focused and motivated during your study sessions. Start a study session and I'll support you along the way! 🚀
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Ask me anything about studying...">
+                <button class="btn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+
+        <!-- Study Section -->
+        <div class="study-section">
+            <div class="timer-container">
+                <div class="progress-ring">
+                    <svg>
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#00f5ff"/>
+                                <stop offset="100%" style="stop-color:#39ff14"/>
+                            </linearGradient>
+                        </defs>
+                        <circle class="progress-bg" cx="100" cy="100" r="90"/>
+                        <circle class="progress-bar" cx="100" cy="100" r="90" 
+                                stroke-dasharray="565.48" stroke-dashoffset="565.48" id="progressBar"/>
+                    </svg>
+                </div>
+                <div class="timer-display" id="timerDisplay">00:00</div>
+                <div class="motivation-text" id="motivationText">Ready to focus? Start your study session!</div>
+                <button class="btn start-btn" id="startBtn" onclick="toggleTimer()">Start Study Session</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalTime">0m</div>
+                    <div>Total Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="sessionsCount">0</div>
+                    <div>Sessions</div>
+                </div>
+            </div>
+
+            <div class="games-section" id="gamesSection">
+                <h3>🎮 Game Rewards</h3>
+                <div class="unlock-message" id="unlockMessage" style="display: none;">
+                    🎉 You've earned a break! Choose a mini-game.
+                </div>
+                <div class="games-grid">
+                    <div class="game-card" id="game1" onclick="playGame('palindrome')">
+                        <div>✅ Palindrome Challenge</div>
+                        <small>20min unlock</small>
+                    </div>
+                    <div class="game-card" id="game2" onclick="playGame('quiz')">
+                        <div>🧠 Brain Flash Quiz</div>
+                        <small>40min unlock</small>
+                    </div>
+                    <div class="game-card" id="game3" onclick="playGame('emoji')">
+                        <div>😊 Emoji Puzzle</div>
+                        <small>40min unlock</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+
+</body>
+</html>
