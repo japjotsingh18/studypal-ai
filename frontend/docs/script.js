@@ -105,7 +105,7 @@
                 // Simulate AI response
                 setTimeout(() => {
                     const response = generateAIResponse(message);
-                    addAIMessage(response);
+                    addAIMessageTypingEffect(response);
                 }, 1000);
             }
         }
@@ -127,6 +127,25 @@
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
+
+        function addAIMessageTypingEffect(text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai-message';
+            chatMessages.appendChild(messageDiv);
+        
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < text.length) {
+                    messageDiv.textContent += text[i];
+                    i++;
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 30); // typing speed
+        }
+        
 
         function generateAIResponse(userMessage) {
             const responses = [
