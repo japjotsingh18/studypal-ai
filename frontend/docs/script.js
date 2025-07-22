@@ -143,7 +143,7 @@
                 } else {
                     clearInterval(interval);
                 }
-            }, 30); // typing speed
+            }, 40); // typing speed
         }
         
 
@@ -183,3 +183,15 @@
 
         // Initialize
         updateStats();
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+        
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000); // Display for 3 seconds
+        }
+        
+        

@@ -333,3 +333,23 @@ body {
         height: 150px;
     }
 }
+
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #333;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateY(20px);
+    z-index: 999;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
