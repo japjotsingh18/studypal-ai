@@ -160,7 +160,7 @@ fetch('http://127.0.0.1:5000/api/chat', {
                 } else {
                     clearInterval(interval);
                 }
-            }, 40); // typing speed
+            }, 20); // typing speed
         }
         
 
