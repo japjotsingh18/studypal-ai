@@ -103,10 +103,27 @@
                 input.value = '';
                 
                 // Simulate AI response
-                setTimeout(() => {
-                    const response = generateAIResponse(message);
-                    addAIMessageTypingEffect(response);
-                }, 1000);
+                // Send message to backend for AI response
+fetch('http://127.0.0.1:5000/api/chat', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ message })
+})
+.then(response => response.json())
+.then(data => {
+    if (data.reply) {
+        addAIMessageTypingEffect(data.reply);
+    } else {
+        addAIMessage("Oops! Something went wrong. 😓");
+    }
+})
+.catch(error => {
+    console.error('Error:', error);
+    addAIMessage("Error connecting to StudyPal AI backend. 🛠️");
+});
+
             }
         }
 
@@ -147,18 +164,7 @@
         }
         
 
-        function generateAIResponse(userMessage) {
-            const responses = [
-                "That's a great question! Remember to take short breaks every 25-30 minutes to stay sharp. 🧠",
-                "I suggest using the Pomodoro technique - study for 25 minutes, then take a 5-minute break! ⏰",
-                "Active recall is one of the best study methods. Try testing yourself without looking at notes! 📝",
-                "Don't forget to stay hydrated and keep healthy snacks nearby! Your brain needs fuel! 💧",
-                "Creating mind maps can help you visualize connections between concepts! 🗺️",
-                "Practice explaining concepts out loud - if you can teach it, you know it! 🗣️"
-            ];
-            
-            return responses[Math.floor(Math.random() * responses.length)];
-        }
+        
 
         function playGame(gameType) {
             switch(gameType) {
