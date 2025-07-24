@@ -4,6 +4,9 @@ import os
 import requests
 from dotenv import load_dotenv
 from pathlib import Path
+import sqlite3
+from datetime import datetime
+
 env_path = Path(__file__).resolve().parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
@@ -45,6 +48,63 @@ def chat():
         reply = data["choices"][0]["message"]["content"].strip()
         return jsonify({"reply": reply})
 
+    except Exception as e:
+        print("Exception:", e)
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/save-session", methods=["POST"])
+def save_session():
+    data = request.get_json()
+    total_time = data.get("totalTime")
+    session_count = data.get("sessionCount")
+
+    if total_time is None or session_count is None:
+        return jsonify({"error": "Missing totalTime or sessionCount"}), 400
+
+    db_path = os.path.join(os.path.dirname(__file__), "studypal_data.db")
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        # Create table if not exists
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS sessions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                total_time INTEGER NOT NULL,
+                session_count INTEGER NOT NULL,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        # Insert session data
+        cursor.execute(
+            "INSERT INTO sessions (total_time, session_count) VALUES (?, ?)",
+            (total_time, session_count)
+        )
+        conn.commit()
+        conn.close()
+        return jsonify({"success": True, "message": "Session saved successfully."})
+    except Exception as e:
+        print("Exception:", e)
+        return jsonify({"error": str(e)}), 500
+
+
+# Fetch last 10 study sessions
+@app.route("/api/get-sessions", methods=["GET"])
+def get_sessions():
+    db_path = os.path.join(os.path.dirname(__file__), "studypal_data.db")
+    try:
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT id, total_time, session_count, timestamp
+            FROM sessions
+            ORDER BY timestamp DESC
+            LIMIT 10
+        """)
+        rows = cursor.fetchall()
+        sessions = [dict(row) for row in rows]
+        conn.close()
+        return jsonify({"sessions": sessions})
     except Exception as e:
         print("Exception:", e)
         return jsonify({"error": str(e)}), 500
