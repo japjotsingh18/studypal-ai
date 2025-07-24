@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@300;400;500&display=swap');
 
 * {
@@ -13,14 +12,17 @@ body {
     color: #e0e0e0;
     min-height: 100vh;
     overflow-x: hidden;
+    /* Remove height: 100vh to allow page to extend */
 }
 
+/* Main container adjustments */
 .container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    height: 100vh;
+    min-height: 100vh; /* Changed from height to min-height */
     gap: 2rem;
     padding: 2rem;
+    margin-top: 80px; /* Space for fixed header */
 }
 
 .header {
@@ -33,6 +35,9 @@ body {
     padding: 1rem 2rem;
     border-bottom: 1px solid #00f5ff;
     z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .header h1 {
@@ -43,6 +48,29 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+}
+
+.header .history-btn {
+    background: linear-gradient(45deg, #00f5ff, #39ff14);
+    color: #000;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.3);
+    display: block; /* Override the display: none */
+}
+
+.header .history-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(0, 245, 255, 0.5);
+    background: linear-gradient(45deg, #39ff14, #00f5ff);
 }
 
 .main-content {
@@ -352,4 +380,112 @@ body {
 .toast.show {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Hide the separate history toggle section */
+.history-toggle {
+    display: none;
+}
+
+/* History Section - appears below main content */
+.history-section {
+    width: 100%;
+    background: rgba(15, 15, 35, 0.95);
+    border-top: 3px solid #00f5ff;
+    box-shadow: 0 -10px 30px rgba(0, 245, 255, 0.2);
+    backdrop-filter: blur(20px);
+    margin-top: 3rem; /* Separation from main content */
+    padding: 3rem 2rem;
+}
+
+.history-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #00f5ff;
+}
+
+.history-header h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 2.5rem;
+    font-weight: 900;
+    background: linear-gradient(45deg, #00f5ff, #39ff14);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+    margin: 0;
+}
+
+.history-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.history-table {
+    width: 100%;
+    background: rgba(25, 25, 45, 0.9);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    border: 1px solid #39ff14;
+    box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
+}
+
+.history-table th,
+.history-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(57, 255, 20, 0.2);
+}
+
+.history-table th {
+    background: rgba(57, 255, 20, 0.2);
+    color: #39ff14;
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.history-table td {
+    color: #e0e0e0;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.history-table tr:hover {
+    background: rgba(0, 245, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.chart-container {
+    background: rgba(25, 25, 45, 0.9);
+    border-radius: 15px;
+    padding: 2rem;
+    border: 1px solid #39ff14;
+    box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
+    margin-top: 2rem;
+}
+
+#sessionChart {
+    height: 400px !important;
+    width: 100% !important;
+}
+
+.no-sessions {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 4rem 2rem;
+    font-size: 1.2rem;
+}
+
+.error-message {
+    color: #ff4444;
+    text-align: center;
+    padding: 2rem;
+    background: rgba(255, 68, 68, 0.1);
+    border-radius: 10px;
+    border: 1px solid #ff4444;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
 }

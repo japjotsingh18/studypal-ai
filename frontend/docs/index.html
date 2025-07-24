@@ -10,6 +10,7 @@
 <body>
     <div class="header">
         <h1>StudyPal AI</h1>
+        <button class="btn history-btn" onclick="toggleHistory()">📊 Study History</button>
     </div>
 
     <div class="container main-content">
@@ -85,8 +86,185 @@
         </div>
     </div>
     <div id="toast" class="toast"></div>
+    
+    <!-- History Section (Below main content) -->
+    <div class="history-section" id="historySection" style="display: none;">
+        <div class="history-header">
+            <h2>📊 Study History</h2>
+        </div>
+        
+        <div class="history-content">
+            <div id="historyContent">
+                <div id="loadingMessage">Loading study sessions...</div>
+            </div>
+            <div class="chart-container" id="chartContainer" style="display: none;">
+                <canvas id="sessionChart"></canvas>
+            </div>
+        </div>
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let historyLoaded = false;
+        
+        // Toggle history section visibility
+        function toggleHistory() {
+            const historySection = document.getElementById('historySection');
+            const historyBtn = document.querySelector('.history-btn');
+            
+            if (historySection.style.display === 'none') {
+                historySection.style.display = 'block';
+                historyBtn.textContent = '📊 Hide History';
+                
+                // Load history data only when first opened
+                if (!historyLoaded) {
+                    loadStudyHistory();
+                    historyLoaded = true;
+                }
+                
+                // Smooth scroll to history section
+                setTimeout(() => {
+                    historySection.scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }, 100);
+            } else {
+                historySection.style.display = 'none';
+                historyBtn.textContent = '📊 Study History';
+                
+                // Scroll back to top
+                window.scrollTo({ 
+                    top: 0, 
+                    behavior: 'smooth' 
+                });
+            }
+        }
+        
+        // Study History functionality
+        async function loadStudyHistory() {
+            const historyContent = document.getElementById('historyContent');
+            const chartContainer = document.getElementById('chartContainer');
+            
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/get-sessions');
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to fetch sessions');
+                }
+                
+                if (data.sessions && data.sessions.length > 0) {
+                    displaySessionsTable(data.sessions);
+                    displaySessionsChart(data.sessions);
+                    chartContainer.style.display = 'block';
+                } else {
+                    historyContent.innerHTML = '<div class="no-sessions">No study sessions found. Start studying to see your progress!</div>';
+                }
+            } catch (error) {
+                console.error('Error loading study history:', error);
+                historyContent.innerHTML = `<div class="error-message">Error loading study history: ${error.message}</div>`;
+            }
+        }
+        
+        function displaySessionsTable(sessions) {
+            const historyContent = document.getElementById('historyContent');
+            
+            let tableHTML = `
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Total Time</th>
+                            <th>Session Count</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            sessions.forEach(session => {
+                const totalMinutes = Math.round(session.total_time / 60);
+                const date = new Date(session.timestamp).toLocaleString();
+                
+                tableHTML += `
+                    <tr>
+                        <td>#${session.id}</td>
+                        <td>${totalMinutes} min</td>
+                        <td>${session.session_count}</td>
+                        <td>${date}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += '</tbody></table>';
+            historyContent.innerHTML = tableHTML;
+        }
+        
+        function displaySessionsChart(sessions) {
+            const ctx = document.getElementById('sessionChart').getContext('2d');
+            
+            // Prepare data for chart (last 10 sessions)
+            const labels = sessions.map(session => `Session #${session.id}`);
+            const timeData = sessions.map(session => Math.round(session.total_time / 60)); // Convert to minutes
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Study Time (minutes)',
+                        data: timeData,
+                        backgroundColor: 'rgba(57, 255, 20, 0.6)',
+                        borderColor: 'rgba(57, 255, 20, 1)',
+                        borderWidth: 2,
+                        borderRadius: 5,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#e0e0e0',
+                                font: {
+                                    family: 'Roboto Mono'
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#e0e0e0',
+                                font: {
+                                    family: 'Roboto Mono'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(224, 224, 224, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#e0e0e0',
+                                font: {
+                                    family: 'Roboto Mono'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(224, 224, 224, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+    </script>
     <script src="./script.js"></script>
-
 </body>
 </html>
