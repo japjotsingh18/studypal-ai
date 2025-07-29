@@ -280,10 +280,16 @@ body {
     margin: 1rem 0;
 }
 
+/* Less vibrant Games Section */
 .games-section {
-    opacity: 0.3;
-    transition: all 0.5s ease;
-    pointer-events: none;
+    border: 1px solid rgba(0, 245, 255, 0.4);
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 245, 255, 0.15);
+    padding: 20px;
+    background: linear-gradient(to bottom, rgba(17, 24, 39, 0.8), rgba(31, 41, 55, 0.6));
+    color: #00f5ff;
+    margin-bottom: 2rem;
+    transition: box-shadow 0.3s;
 }
 
 .games-section.unlocked {
@@ -305,77 +311,344 @@ body {
 }
 
 .game-card {
-    background: rgba(0, 0, 0, 0.5);
-    border: 2px solid transparent;
+    background: #0f172a;
+    border: 1px solid #39ff14;
     border-radius: 10px;
+    color: #fff;
     padding: 1rem;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
     text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
 }
 
-.game-card.unlocked {
-    border-color: #39ff14;
-    background: rgba(57, 255, 20, 0.1);
-    box-shadow: 0 0 15px rgba(57, 255, 20, 0.3);
+.game-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 8px rgba(57, 255, 20, 0.4);
+    cursor: pointer;
 }
 
-.game-card.unlocked:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 25px rgba(57, 255, 20, 0.5);
+.game-card.locked {
+    opacity: 0.4;
+    pointer-events: none;
+    filter: grayscale(100%) blur(1px);
+    border-color: #444;
+    background: #181e29;
+    color: #888;
 }
 
-.game-card::before {
-    content: '';
+.game-card.locked::after {
+    content: '🔒';
     position: absolute;
-    top: 0;
-    left: -100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.game-card.unlocked {
+    border-color: rgba(0, 245, 255, 0.6);
+    background: rgba(17, 34, 51, 0.8);
+    box-shadow: 0 0 5px rgba(0, 245, 255, 0.4);
+    color: #00f5ff;
+    animation: unlockGlowSubtle 1s ease-in-out;
+}
+
+@keyframes unlockGlowSubtle {
+    0% { 
+        opacity: 0.4;
+        filter: grayscale(100%) blur(1px);
+        box-shadow: 0 0 0 rgba(0, 245, 255, 0);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(0, 245, 255, 0.4);
+    }
+    100% { 
+        opacity: 1;
+        filter: none;
+        box-shadow: 0 0 5px rgba(0, 245, 255, 0.4);
+    }
+}
+
+.progress-indicator {
+    margin-top: 0.5rem;
+}
+
+.progress-bar-mini {
     width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 0.3rem;
+}
+
+.progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left 0.5s ease;
+    background: linear-gradient(45deg, #00f5ff, #39ff14);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+    width: 0%;
 }
 
-.game-card.unlocked:hover::before {
-    left: 100%;
+.progress-text {
+    font-size: 0.6rem;
+    color: #888;
+    text-align: center;
 }
 
-.unlock-message {
-    background: linear-gradient(45deg, #39ff14, #00f5ff);
+.unlock-celebration-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(31, 41, 55, 0.9);
+    border: 1px solid rgba(57, 255, 20, 0.6);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    z-index: 1000;
+    animation: celebrationBounceSubtle 4s ease-in-out;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+}
+
+@keyframes celebrationBounceSubtle {
+    0%, 100% { 
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+    10%, 90% { 
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.02);
+    }
+}
+
+.celebration-content h3 {
+    color: rgba(57, 255, 20, 0.9);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.celebration-content p {
+    color: #e0e0e0;
+    margin-bottom: 0.5rem;
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.9);
+    color: #fff;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #00f5ff;
+    opacity: 0;
+    transform: translateY(100px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Hide the separate history toggle section */
+.history-toggle {
+    display: none;
+}
+
+/* History Section - appears below main content */
+.history-section {
+    width: 100%;
+    background: rgba(15, 15, 35, 0.95);
+    border-top: 3px solid #00f5ff;
+    box-shadow: 0 -10px 30px rgba(0, 245, 255, 0.2);
+    backdrop-filter: blur(20px);
+    margin-top: 3rem; /* Separation from main content */
+    padding: 3rem 2rem;
+}
+
+.history-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #00f5ff;
+}
+
+.history-header h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 2.5rem;
+    font-weight: 900;
+    background: linear-gradient(45deg, #00f5ff, #39ff14);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 1rem;
-    animation: glow 2s infinite alternate;
+    text-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+    margin: 0;
 }
 
-@keyframes glow {
-    from { text-shadow: 0 0 5px rgba(57, 255, 20, 0.5); }
-    to { text-shadow: 0 0 20px rgba(0, 245, 255, 0.8); }
+.history-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.history-table {
+    width: 100%;
+    background: rgba(25, 25, 45, 0.9);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    border: 1px solid #39ff14;
+    box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
+}
+
+.history-table th,
+.history-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(57, 255, 20, 0.2);
+}
+
+.history-table th {
+    background: rgba(57, 255, 20, 0.2);
+    color: #39ff14;
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.history-table td {
+    color: #e0e0e0;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.history-table tr:hover {
+    background: rgba(0, 245, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.chart-container {
+    background: rgba(25, 25, 45, 0.9);
+    border-radius: 15px;
+    padding: 2rem;
+    border: 1px solid #39ff14;
+    box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
+    margin-top: 2rem;
+}
+
+#sessionChart {
+    height: 400px !important;
+    width: 100% !important;
+}
+
+.no-sessions {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 4rem 2rem;
+    font-size: 1.2rem;
+}
+
+.error-message {
+    color: #ff4444;
+    text-align: center;
+    padding: 2rem;
+    background: rgba(255, 68, 68, 0.1);
+    border-radius: 10px;
+    border: 1px solid #ff4444;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
 }
 
 .stats {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
-    margin-top: 1rem;
+    margin: 2rem 0;
 }
 
 .stat-card {
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(0, 245, 255, 0.3);
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #39ff14;
     border-radius: 10px;
-    padding: 1rem;
+    padding: 1.5rem;
     text-align: center;
+    box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(57, 255, 20, 0.4);
+    border-color: #00f5ff;
 }
 
 .stat-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #39ff14;
+    text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #e0e0e0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+.games-section h3 {
+    font-family: 'Orbitron', monospace;
     font-size: 1.5rem;
-    font-weight: bold;
-    color: #00f5ff;
+    font-weight: 700;
+    color: #39ff14;
+    text-align: center;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+}
+
+#unlockMessage {
+    text-align: center;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: rgba(31, 41, 55, 0.6);
+    border: 1px solid rgba(57, 255, 20, 0.5);
+    border-radius: 10px;
+    color: rgba(57, 255, 20, 0.9);
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    text-align: center;
+    box-shadow: 0 0 6px rgba(57, 255, 20, 0.2);
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+@keyframes unlockPulse {
+    0%, 100% { 
+        box-shadow: 0 0 6px rgba(57, 255, 20, 0.2);
+    }
+    50% { 
+        box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+    }
 }
 
 @media (max-width: 768px) {
@@ -596,132 +869,4 @@ body {
     #sessionChart {
         height: 200px !important;
     }
-}
-
-.toast {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background-color: #333;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 8px;
-    opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    transform: translateY(20px);
-    z-index: 999;
-    font-family: 'Roboto Mono', monospace;
-}
-
-.toast.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Hide the separate history toggle section */
-.history-toggle {
-    display: none;
-}
-
-/* History Section - appears below main content */
-.history-section {
-    width: 100%;
-    background: rgba(15, 15, 35, 0.95);
-    border-top: 3px solid #00f5ff;
-    box-shadow: 0 -10px 30px rgba(0, 245, 255, 0.2);
-    backdrop-filter: blur(20px);
-    margin-top: 3rem; /* Separation from main content */
-    padding: 3rem 2rem;
-}
-
-.history-header {
-    text-align: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #00f5ff;
-}
-
-.history-header h2 {
-    font-family: 'Orbitron', monospace;
-    font-size: 2.5rem;
-    font-weight: 900;
-    background: linear-gradient(45deg, #00f5ff, #39ff14);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
-    margin: 0;
-}
-
-.history-content {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.history-table {
-    width: 100%;
-    background: rgba(25, 25, 45, 0.9);
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 2rem;
-    border: 1px solid #39ff14;
-    box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
-}
-
-.history-table th,
-.history-table td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid rgba(57, 255, 20, 0.2);
-}
-
-.history-table th {
-    background: rgba(57, 255, 20, 0.2);
-    color: #39ff14;
-    font-family: 'Orbitron', monospace;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.history-table td {
-    color: #e0e0e0;
-    font-family: 'Roboto Mono', monospace;
-}
-
-.history-table tr:hover {
-    background: rgba(0, 245, 255, 0.1);
-    transition: all 0.3s ease;
-}
-
-.chart-container {
-    background: rgba(25, 25, 45, 0.9);
-    border-radius: 15px;
-    padding: 2rem;
-    border: 1px solid #39ff14;
-    box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
-    margin-top: 2rem;
-}
-
-#sessionChart {
-    height: 400px !important;
-    width: 100% !important;
-}
-
-.no-sessions {
-    text-align: center;
-    color: #888;
-    font-style: italic;
-    padding: 4rem 2rem;
-    font-size: 1.2rem;
-}
-
-.error-message {
-    color: #ff4444;
-    text-align: center;
-    padding: 2rem;
-    background: rgba(255, 68, 68, 0.1);
-    border-radius: 10px;
-    border: 1px solid #ff4444;
-    margin-bottom: 2rem;
-    font-size: 1.1rem;
 }

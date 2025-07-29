@@ -1,5 +1,4 @@
-
-        let timer = {
+let timer = {
             seconds: 0,
             interval: null,
             isRunning: false
@@ -73,21 +72,197 @@
             }
         }
 
-        function checkGameUnlocks() {
-            const gamesSection = document.getElementById('gamesSection');
-            const unlockMessage = document.getElementById('unlockMessage');
-            
-            if (timer.seconds >= 1200) { // 20 minutes
-                document.getElementById('game1').classList.add('unlocked');
-                gamesSection.classList.add('unlocked');
-                unlockMessage.style.display = 'block';
-            }
-            
-            if (timer.seconds >= 2400) { // 40 minutes
-                document.getElementById('game2').classList.add('unlocked');
-                document.getElementById('game3').classList.add('unlocked');
-            }
+        // Utility function to get total study time from backend
+async function getTotalStudyTime() {
+    try {
+        const res = await fetch('http://127.0.0.1:5000/api/get-sessions');
+        const data = await res.json();
+        if (data.sessions) {
+            return data.sessions.reduce((sum, s) => sum + s.total_time, 0);
         }
+        return 0;
+    } catch (error) {
+        console.error('Error fetching total study time:', error);
+        return 0;
+    }
+}
+
+// Check and update game unlock status
+async function checkGameUnlocks() {
+    const totalSeconds = await getTotalStudyTime();
+    const totalMinutes = Math.floor(totalSeconds / 60);
+
+    const unlockMsg = document.getElementById('unlockMessage');
+    const game1 = document.getElementById('game1');
+    const game2 = document.getElementById('game2');
+    const game3 = document.getElementById('game3');
+
+    // Show unlock message if any game should be unlocked
+    if (totalMinutes >= 20) {
+        unlockMsg.style.display = 'block';
+    } else {
+        unlockMsg.style.display = 'none';
+    }
+
+    // Game 1 - Palindrome Challenge (20 minutes)
+    if (totalMinutes >= 20) {
+        game1.classList.remove('locked');
+        game1.classList.add('unlocked');
+        // Add celebration animation if just unlocked
+        if (!game1.dataset.wasUnlocked) {
+            showGameUnlockCelebration('Palindrome Challenge');
+            game1.dataset.wasUnlocked = 'true';
+        }
+    } else {
+        game1.classList.add('locked');
+        game1.classList.remove('unlocked');
+    }
+
+    // Game 2 & 3 - Brain Flash Quiz & Emoji Puzzle (40 minutes)
+    if (totalMinutes >= 40) {
+        game2.classList.remove('locked');
+        game2.classList.add('unlocked');
+        game3.classList.remove('locked');
+        game3.classList.add('unlocked');
+        
+        // Add celebration animation if just unlocked
+        if (!game2.dataset.wasUnlocked) {
+            showGameUnlockCelebration('Brain Flash Quiz & Emoji Puzzle');
+            game2.dataset.wasUnlocked = 'true';
+            game3.dataset.wasUnlocked = 'true';
+        }
+    } else {
+        game2.classList.add('locked');
+        game2.classList.remove('unlocked');
+        game3.classList.add('locked');
+        game3.classList.remove('unlocked');
+    }
+
+    // Update progress indicators
+    updateUnlockProgress(totalMinutes);
+}
+
+// Show celebration when games are unlocked
+function showGameUnlockCelebration(gameName) {
+    // Create a temporary celebration message
+    const celebration = document.createElement('div');
+    celebration.className = 'unlock-celebration-popup';
+    celebration.innerHTML = `
+        <div class="celebration-content">
+            <h3>🎉 Congratulations!</h3>
+            <p>You've unlocked: <strong>${gameName}</strong></p>
+            <p>You've earned a break!</p>
+        </div>
+    `;
+    
+    document.body.appendChild(celebration);
+    
+    // Remove after 4 seconds
+    setTimeout(() => {
+        celebration.remove();
+    }, 4000);
+}
+
+// Update progress indicators for locked games
+function updateUnlockProgress(totalMinutes) {
+    const game1 = document.getElementById('game1');
+    const game2 = document.getElementById('game2');
+    const game3 = document.getElementById('game3');
+
+    // Update Game 1 progress (Palindrome - 20 min requirement)
+    if (totalMinutes < 20) {
+        const progress = (totalMinutes / 20) * 100;
+        updateGameProgress(game1, progress, 20 - totalMinutes);
+    }
+
+    // Update Game 2 & 3 progress (Quiz & Emoji - 40 min requirement)
+    if (totalMinutes < 40) {
+        const progress = (totalMinutes / 40) * 100;
+        updateGameProgress(game2, progress, 40 - totalMinutes);
+        updateGameProgress(game3, progress, 40 - totalMinutes);
+    }
+}
+
+// Helper function to update individual game progress
+function updateGameProgress(gameElement, progress, remaining) {
+    let progressBar = gameElement.querySelector('.progress-indicator');
+    if (!progressBar) {
+        progressBar = document.createElement('div');
+        progressBar.className = 'progress-indicator';
+        progressBar.innerHTML = `
+            <div class="progress-bar-mini">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="progress-text">${remaining} min remaining</div>
+        `;
+        gameElement.appendChild(progressBar);
+    }
+    
+    const progressFill = progressBar.querySelector('.progress-fill');
+    const progressText = progressBar.querySelector('.progress-text');
+    
+    if (progressFill) {
+        progressFill.style.width = `${Math.min(progress, 100)}%`;
+    }
+    if (progressText) {
+        progressText.textContent = `${remaining} min remaining`;
+    }
+}
+
+// Enhanced playGame function to check unlock status
+function playGame(gameType) {
+    const gameElement = document.getElementById(`game${gameType === 'palindrome' ? '1' : gameType === 'quiz' ? '2' : '3'}`);
+    
+    if (gameElement && gameElement.classList.contains('locked')) {
+        showToast('🔒 This game is still locked! Study more to unlock it.');
+        return;
+    }
+    
+    // Game is unlocked, show the game content
+    switch (gameType) {
+        case 'palindrome':
+            addAIMessage("🎮 Palindrome Challenge: Is 'racecar' a palindrome? Take a 5-minute break and come back refreshed!");
+            break;
+        case 'quiz':
+            addAIMessage("🧠 Brain Flash Quiz: Quick! Name 3 study techniques we've discussed. Great job taking a brain break!");
+            break;
+        case 'emoji':
+            addAIMessage("😊 Emoji Puzzle: Can you decode this? 📚+⏰+🧠 = ? (Answer: Effective studying!) Time for a quick stretch!");
+            break;
+    }
+}
+
+// Enhanced showToast function
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    if (toast) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    } else {
+        // Create toast if it doesn't exist
+        const newToast = document.createElement('div');
+        newToast.id = 'toast';
+        newToast.className = 'toast show';
+        newToast.textContent = message;
+        document.body.appendChild(newToast);
+        
+        setTimeout(() => {
+            newToast.classList.remove('show');
+        }, 3000);
+    }
+}
+
+// Add event listener when DOM is loaded
+window.addEventListener('DOMContentLoaded', () => {
+    checkGameUnlocks(); // Check unlock status on page load
+    
+    // Check unlocks periodically (every 30 seconds)
+    setInterval(checkGameUnlocks, 30000);
+});
 
         function updateStats() {
             document.getElementById('totalTime').textContent = `${Math.floor(stats.totalTime / 60)}m`;
@@ -162,42 +337,4 @@ fetch('http://127.0.0.1:5000/api/chat', {
                 }
             }, 20); // typing speed
         }
-        
-
-        
-
-        function playGame(gameType) {
-            switch(gameType) {
-                case 'palindrome':
-                    addAIMessage("🎮 Palindrome Challenge: Is 'racecar' a palindrome? Take a 5-minute break and come back refreshed!");
-                    break;
-                case 'quiz':
-                    addAIMessage("🧠 Brain Flash Quiz: Quick! Name 3 study techniques we've discussed. Great job taking a brain break!");
-                    break;
-                case 'emoji':
-                    addAIMessage("😊 Emoji Puzzle: Can you decode this? 📚+⏰+🧠 = ? (Answer: Effective studying!) Time for a quick stretch!");
-                    break;
-            }
-        }
-
-        // Allow Enter key to send messages
-        document.getElementById('chatInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-
-        // Initialize
-        updateStats();
-
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-        
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000); // Display for 3 seconds
-        }
-        
         
