@@ -52,16 +52,21 @@ let timer = {
             const startBtn = document.getElementById('startBtn');
             
             if (!timer.isRunning) {
+                // Reset unlock tracking flags when starting a new session
+                resetUnlockFlags();
+                
                 timer.interval = setInterval(updateTimer, 1000);
                 timer.isRunning = true;
                 startBtn.textContent = 'Pause Session';
                 startBtn.style.background = 'linear-gradient(45deg, #ff4757, #ff6b7a)';
+                document.getElementById('finishBtn').style.display = 'block';
                 addAIMessage("Study session started! I'm here if you need any help. Let's make this productive! 💪");
             } else {
                 clearInterval(timer.interval);
                 timer.isRunning = false;
                 startBtn.textContent = 'Resume Session';
                 startBtn.style.background = 'linear-gradient(45deg, #00f5ff, #39ff14)';
+                document.getElementById('finishBtn').style.display = 'none';
                 
                 // Update stats
                 stats.totalTime += timer.seconds;
@@ -89,8 +94,8 @@ async function getTotalStudyTime() {
 
 // Check and update game unlock status
 async function checkGameUnlocks() {
-    const totalSeconds = await getTotalStudyTime();
-    const totalMinutes = Math.floor(totalSeconds / 60);
+    // Use current session time instead of total database time
+    const currentSessionMinutes = Math.floor(timer.seconds / 60);
 
     const unlockMsg = document.getElementById('unlockMessage');
     const game1 = document.getElementById('game1');
@@ -98,14 +103,14 @@ async function checkGameUnlocks() {
     const game3 = document.getElementById('game3');
 
     // Show unlock message if any game should be unlocked
-    if (totalMinutes >= 20) {
+    if (currentSessionMinutes >= 20) {
         unlockMsg.style.display = 'block';
     } else {
         unlockMsg.style.display = 'none';
     }
 
     // Game 1 - Palindrome Challenge (20 minutes)
-    if (totalMinutes >= 20) {
+    if (currentSessionMinutes >= 20) {
         game1.classList.remove('locked');
         game1.classList.add('unlocked');
         // Add celebration animation if just unlocked
@@ -119,7 +124,7 @@ async function checkGameUnlocks() {
     }
 
     // Game 2 & 3 - Brain Flash Quiz & Emoji Puzzle (40 minutes)
-    if (totalMinutes >= 40) {
+    if (currentSessionMinutes >= 40) {
         game2.classList.remove('locked');
         game2.classList.add('unlocked');
         game3.classList.remove('locked');
@@ -139,7 +144,7 @@ async function checkGameUnlocks() {
     }
 
     // Update progress indicators
-    updateUnlockProgress(totalMinutes);
+    updateUnlockProgress(currentSessionMinutes);
 }
 
 // Show celebration when games are unlocked
@@ -164,22 +169,22 @@ function showGameUnlockCelebration(gameName) {
 }
 
 // Update progress indicators for locked games
-function updateUnlockProgress(totalMinutes) {
+function updateUnlockProgress(currentMinutes) {
     const game1 = document.getElementById('game1');
     const game2 = document.getElementById('game2');
     const game3 = document.getElementById('game3');
 
     // Update Game 1 progress (Palindrome - 20 min requirement)
-    if (totalMinutes < 20) {
-        const progress = (totalMinutes / 20) * 100;
-        updateGameProgress(game1, progress, 20 - totalMinutes);
+    if (currentMinutes < 20) {
+        const progress = (currentMinutes / 20) * 100;
+        updateGameProgress(game1, progress, 20 - currentMinutes);
     }
 
     // Update Game 2 & 3 progress (Quiz & Emoji - 40 min requirement)
-    if (totalMinutes < 40) {
-        const progress = (totalMinutes / 40) * 100;
-        updateGameProgress(game2, progress, 40 - totalMinutes);
-        updateGameProgress(game3, progress, 40 - totalMinutes);
+    if (currentMinutes < 40) {
+        const progress = (currentMinutes / 40) * 100;
+        updateGameProgress(game2, progress, 40 - currentMinutes);
+        updateGameProgress(game3, progress, 40 - currentMinutes);
     }
 }
 
@@ -238,10 +243,7 @@ function showToast(message) {
     if (toast) {
         toast.textContent = message;
         toast.classList.add('show');
-        
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3000);
+        setTimeout(() => toast.classList.remove('show'), 3000);
     } else {
         // Create toast if it doesn't exist
         const newToast = document.createElement('div');
@@ -337,4 +339,149 @@ fetch('http://127.0.0.1:5000/api/chat', {
                 }
             }, 20); // typing speed
         }
-        
+
+function finishSession() {
+    showCustomModal();
+}
+
+function showCustomModal() {
+    document.getElementById('customModal').style.display = 'flex';
+}
+
+function closeCustomModal() {
+    document.getElementById('customModal').style.display = 'none';
+}
+
+async function confirmFinishSession() {
+    // Close the modal first
+    closeCustomModal();
+    
+    // Stop the timer if running
+    if (timer.isRunning) {
+        timer.isRunning = false;
+        clearInterval(timer.interval);
+    }
+    
+    // Save current session data to backend before resetting
+    if (timer.seconds > 0) {
+        try {
+            const sessionData = {
+                totalTime: timer.seconds,
+                sessionCount: 1
+            };
+            
+            const response = await fetch('http://127.0.0.1:5001/api/save-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(sessionData)
+            });
+            
+            if (response.ok) {
+                console.log('Session saved successfully');
+            } else {
+                console.error('Failed to save session');
+            }
+        } catch (error) {
+            console.error('Error saving session:', error);
+        }
+    }
+    
+    // Reset localStorage values
+    localStorage.setItem('totalTime', '0');
+    localStorage.setItem('sessionCount', '0');
+    localStorage.setItem('palindromeUnlocked', 'false');
+    localStorage.setItem('brainQuizUnlocked', 'false');
+    localStorage.setItem('emojiPuzzleUnlocked', 'false');
+    
+    // Clear any celebration flags
+    localStorage.removeItem('game1Unlocked');
+    localStorage.removeItem('game2Unlocked');
+    localStorage.removeItem('game3Unlocked');
+    localStorage.removeItem('celebrationShown');
+    
+    // Reset UI elements
+    const startBtn = document.getElementById('startBtn');
+    startBtn.textContent = 'Start Study Session';
+    startBtn.style.background = 'linear-gradient(45deg, #00f5ff, #39ff14)';
+    document.getElementById('finishBtn').style.display = 'none';
+    document.getElementById('timerDisplay').textContent = '00:00';
+    
+    // Reset timer
+    timer.seconds = 0;
+    timer.isRunning = false;
+    
+    // Reset progress bar
+    const progressBar = document.getElementById('progressBar');
+    if (progressBar) {
+        progressBar.style.strokeDashoffset = 565.48;
+    }
+    
+    // Lock all games and reset flags
+    resetUnlockFlags();
+    
+    // Hide unlock message
+    const unlockMessage = document.getElementById('unlockMessage');
+    if (unlockMessage) {
+        unlockMessage.style.display = 'none';
+    }
+    
+    // Show toast notification
+    showToast('Session finished and saved! All progress reset.');
+    
+    // Add AI message
+    addAIMessage("🎉 Session completed and saved! Your study time has been recorded. Start a new session whenever you're ready!");
+    
+    console.log('Session finished, saved, and reset');
+}
+
+function lockAllGames() {
+    const games = [
+        document.getElementById('game1'),
+        document.getElementById('game2'), 
+        document.getElementById('game3')
+    ];
+    
+    games.forEach(game => {
+        if (game) {
+            game.classList.remove('unlocked');
+            game.classList.add('locked');
+        }
+    });
+}
+
+// Reset unlock tracking flags for a fresh session
+function resetUnlockFlags() {
+    const games = [
+        document.getElementById('game1'),
+        document.getElementById('game2'), 
+        document.getElementById('game3')
+    ];
+    
+    games.forEach(game => {
+        if (game) {
+            // Remove unlock tracking flags
+            delete game.dataset.wasUnlocked;
+            
+            // Lock all games at start
+            game.classList.remove('unlocked');
+            game.classList.add('locked');
+            
+            // Remove any existing progress indicators
+            const progressIndicator = game.querySelector('.progress-indicator');
+            if (progressIndicator) {
+                progressIndicator.remove();
+            }
+        }
+    });
+    
+    // Hide unlock message
+    const unlockMessage = document.getElementById('unlockMessage');
+    if (unlockMessage) {
+        unlockMessage.style.display = 'none';
+    }
+    
+    console.log('Unlock flags reset for new session');
+}
+

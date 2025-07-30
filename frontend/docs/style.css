@@ -206,6 +206,13 @@ body {
 
 .timer-container {
     text-align: center;
+    position: relative;
+}
+
+.timer-container .btn {
+    display: block;
+    margin: 0.5rem auto;
+    width: fit-content;
 }
 
 .timer-display {
@@ -868,5 +875,143 @@ body {
     
     #sessionChart {
         height: 200px !important;
+    }
+}
+
+/* Add these styles at the end of your CSS file: */
+
+/* Custom Modal Styles */
+.custom-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 2px solid #00f5ff;
+    border-radius: 15px;
+    padding: 2rem;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 245, 255, 0.3);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: scale(0.7) translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    margin-bottom: 1.5rem;
+}
+
+.modal-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.modal-title {
+    color: #00f5ff;
+    font-family: 'Orbitron', monospace;
+    font-size: 1.5rem;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.modal-message {
+    color: #e0e0e0;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.modal-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 25px;
+    font-family: 'Orbitron', monospace;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    min-width: 120px;
+}
+
+.modal-btn-cancel {
+    background: linear-gradient(45deg, #4a5568, #718096);
+    color: white;
+    border: 2px solid #a0aec0;
+}
+
+.modal-btn-cancel:hover {
+    background: linear-gradient(45deg, #2d3748, #4a5568);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(74, 85, 104, 0.4);
+}
+
+.modal-btn-confirm {
+    background: linear-gradient(45deg, #dc2626, #ef4444);
+    color: white;
+    border: 2px solid #f87171;
+    box-shadow: 0 0 10px rgba(248, 113, 113, 0.3);
+}
+
+.modal-btn-confirm:hover {
+    background: linear-gradient(45deg, #b91c1c, #dc2626);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4), 0 0 15px rgba(248, 113, 113, 0.5);
+}
+
+/* Responsive modal */
+@media (max-width: 480px) {
+    .modal-content {
+        padding: 1.5rem;
+        max-width: 350px;
+    }
+    
+    .modal-buttons {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .modal-btn {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .modal-title {
+        font-size: 1.2rem;
+    }
+    
+    .modal-message {
+        font-size: 0.9rem;
     }
 }

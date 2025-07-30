@@ -109,5 +109,20 @@ def get_sessions():
         print("Exception:", e)
         return jsonify({"error": str(e)}), 500
 
+# Delete all session data (for finish session functionality)
+@app.route("/api/clear-sessions", methods=["DELETE"])
+def clear_sessions():
+    db_path = os.path.join(os.path.dirname(__file__), "studypal_data.db")
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM sessions")
+        conn.commit()
+        conn.close()
+        return jsonify({"success": True, "message": "All sessions cleared successfully."})
+    except Exception as e:
+        print("Exception:", e)
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5001)

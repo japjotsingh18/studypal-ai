@@ -50,6 +50,7 @@
                 <div class="timer-display" id="timerDisplay">00:00</div>
                 <div class="motivation-text" id="motivationText">Ready to focus? Start your study session!</div>
                 <button class="btn start-btn" id="startBtn" onclick="toggleTimer()">Start Study Session</button>
+                <button class="btn finish-btn" id="finishBtn" onclick="finishSession()" style="display: none;">Finish Session</button>
             </div>
 
             <div class="stats">
@@ -102,6 +103,23 @@
             </div>
         </div>
     </div>
+
+    <!-- Custom Modal for Finish Session -->
+<div id="customModal" class="custom-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="modal-icon">⚠️</span>
+            <h3 class="modal-title">Finish Session</h3>
+        </div>
+        <div class="modal-message">
+            Are you sure you want to finish this session? This will reset your progress and lock all games.
+        </div>
+        <div class="modal-buttons">
+            <button class="modal-btn modal-btn-cancel" onclick="closeCustomModal()">Cancel</button>
+            <button class="modal-btn modal-btn-confirm" onclick="confirmFinishSession()">Finish Session</button>
+        </div>
+    </div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
