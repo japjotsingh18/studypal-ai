@@ -122,6 +122,92 @@
     </div>
 </div>
 
+    <!-- Palindrome Challenge Mini-Game -->
+    <div id="palindromeGame" class="palindrome-game-overlay" style="display: none;">
+        <div class="palindrome-game-container">
+            <div class="palindrome-game-header">
+                <h2 class="palindrome-title">🎮 Palindrome Challenge</h2>
+                <p class="palindrome-subtitle">Enter a word or sentence to check if it's a palindrome!</p>
+            </div>
+            
+            <div class="palindrome-input-section">
+                <input 
+                    type="text" 
+                    id="palindromeInput" 
+                    class="palindrome-input" 
+                    placeholder="Type your text here..."
+                    maxlength="100"
+                />
+            </div>
+            
+            <div class="palindrome-button-section">
+                <button id="checkPalindromeBtn" class="palindrome-check-btn" onclick="checkPalindrome()">
+                    Check Palindrome
+                </button>
+            </div>
+            
+            <div id="palindromeResult" class="palindrome-result" style="opacity: 0;">
+                <p id="palindromeResultText"></p>
+            </div>
+            
+            <div class="palindrome-controls">
+                <button class="palindrome-control-btn clear-btn" onclick="clearPalindromeGame()">
+                    Clear
+                </button>
+                <button class="palindrome-control-btn close-btn" onclick="closePalindromeGame()">
+                    Close Game
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Brain Flash Quiz Game -->
+    <div id="brainFlashQuiz" class="quiz-game-overlay" style="display: none;">
+        <div class="quiz-game-container">
+            <div class="quiz-header">
+                <h2 class="quiz-title">🧠 Brain Flash Quiz</h2>
+                <div class="quiz-stats">
+                    <div class="quiz-timer" id="quizTimer">60</div>
+                    <div class="quiz-score">Score: <span id="quizScore">0</span></div>
+                    <div class="quiz-high-score">Best: <span id="quizHighScore">0</span></div>
+                </div>
+            </div>
+
+            <div id="quizGameContent" class="quiz-content">
+                <div class="quiz-question-container">
+                    <div class="quiz-question-number">Question <span id="questionNumber">1</span></div>
+                    <div class="quiz-question" id="quizQuestion">Loading question...</div>
+                </div>
+
+                <div class="quiz-options" id="quizOptions">
+                    <button class="quiz-option" onclick="selectQuizAnswer(0)">A</button>
+                    <button class="quiz-option" onclick="selectQuizAnswer(1)">B</button>
+                    <button class="quiz-option" onclick="selectQuizAnswer(2)">C</button>
+                    <button class="quiz-option" onclick="selectQuizAnswer(3)">D</button>
+                </div>
+
+                <div class="quiz-feedback" id="quizFeedback" style="opacity: 0;"></div>
+            </div>
+
+            <div id="quizEndScreen" class="quiz-end-screen" style="display: none;">
+                <h3 class="quiz-end-title">🎯 Quiz Complete!</h3>
+                <div class="quiz-final-score">
+                    Final Score: <span id="finalScore">0</span>
+                </div>
+                <div class="quiz-performance" id="quizPerformance"></div>
+                <div class="quiz-end-controls">
+                    <button class="quiz-restart-btn" onclick="startBrainFlashQuiz()">🔄 Play Again</button>
+                    <button class="quiz-close-btn" onclick="closeBrainFlashQuiz()">Close Quiz</button>
+                </div>
+            </div>
+
+            <div class="quiz-controls">
+                <button class="quiz-control-btn quiz-pause-btn" onclick="pauseBrainFlashQuiz()" id="quizPauseBtn">⏸️ Pause</button>
+                <button class="quiz-control-btn quiz-exit-btn" onclick="closeBrainFlashQuiz()">❌ Exit</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         let historyLoaded = false;
@@ -288,6 +374,358 @@
                 console.log('Refreshing history data...');
                 loadStudyHistory();
             }
+        }
+        
+        // Palindrome Game Functions
+        function openPalindromeGame() {
+            const gameOverlay = document.getElementById('palindromeGame');
+            gameOverlay.style.display = 'flex';
+            
+            // Focus on input after a short delay
+            setTimeout(() => {
+                document.getElementById('palindromeInput').focus();
+            }, 300);
+            
+            // Clear any previous results
+            clearPalindromeResult();
+        }
+        
+        function closePalindromeGame() {
+            const gameOverlay = document.getElementById('palindromeGame');
+            gameOverlay.style.display = 'none';
+            
+            // Clear input and results
+            clearPalindromeGame();
+        }
+        
+        function clearPalindromeGame() {
+            document.getElementById('palindromeInput').value = '';
+            clearPalindromeResult();
+        }
+        
+        function clearPalindromeResult() {
+            const resultDiv = document.getElementById('palindromeResult');
+            resultDiv.style.opacity = '0';
+            resultDiv.className = 'palindrome-result';
+        }
+        
+        function showPalindromeResult(message, type) {
+            const resultDiv = document.getElementById('palindromeResult');
+            const resultText = document.getElementById('palindromeResultText');
+            
+            resultText.textContent = message;
+            resultDiv.className = `palindrome-result ${type}`;
+            resultDiv.style.opacity = '1';
+        }
+        
+        function isPalindrome(str) {
+            // Remove spaces, punctuation, and convert to lowercase
+            const cleaned = str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+            
+            // Check if cleaned string equals its reverse
+            return cleaned === cleaned.split('').reverse().join('');
+        }
+        
+        function checkPalindrome() {
+            const input = document.getElementById('palindromeInput').value.trim();
+            
+            // Check if input is empty
+            if (input === '') {
+                showPalindromeResult('⚠️ Please enter something.', 'warning');
+                return;
+            }
+            
+            // Check if it's a palindrome
+            if (isPalindrome(input)) {
+                showPalindromeResult('✅ It\'s a palindrome!', 'success');
+            } else {
+                showPalindromeResult('❌ Not a palindrome.', 'error');
+            }
+        }
+        
+        // Add Enter key support for palindrome input
+        document.addEventListener('DOMContentLoaded', function() {
+            const palindromeInput = document.getElementById('palindromeInput');
+            if (palindromeInput) {
+                palindromeInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        checkPalindrome();
+                    }
+                });
+            }
+        });
+        
+        // Brain Flash Quiz Functions
+        let quizState = {
+            isActive: false,
+            isPaused: false,
+            timeLeft: 60,
+            score: 0,
+            questionCount: 0,
+            currentQuestion: null,
+            timer: null
+        };
+
+        const quizQuestions = [
+            // Math Questions
+            { question: "What is 15 × 8?", options: ["120", "140", "110", "130"], correct: 0 },
+            { question: "What is 144 ÷ 12?", options: ["11", "13", "12", "14"], correct: 2 },
+            { question: "What is 7² + 3²?", options: ["58", "49", "40", "52"], correct: 0 },
+            { question: "What is 25% of 80?", options: ["15", "25", "20", "30"], correct: 2 },
+            { question: "What is √64?", options: ["6", "8", "10", "7"], correct: 1 },
+            { question: "What is 13 + 29?", options: ["42", "41", "43", "40"], correct: 0 },
+            { question: "What is 156 - 89?", options: ["67", "77", "57", "69"], correct: 0 },
+            { question: "What is 2³ × 5?", options: ["30", "35", "40", "45"], correct: 2 },
+            { question: "What is 72 ÷ 8?", options: ["8", "9", "10", "7"], correct: 1 },
+            { question: "What is 11 × 11?", options: ["111", "121", "131", "141"], correct: 1 },
+            
+            // Logic Questions
+            { question: "If today is Wednesday, what day was it 3 days ago?", options: ["Sunday", "Monday", "Saturday", "Tuesday"], correct: 0 },
+            { question: "Which number comes next: 2, 4, 8, 16, ?", options: ["24", "32", "28", "20"], correct: 1 },
+            { question: "If A=1, B=2, C=3, what does CAB equal?", options: ["312", "321", "123", "132"], correct: 0 },
+            { question: "How many sides does a hexagon have?", options: ["5", "7", "6", "8"], correct: 2 },
+            { question: "Which is the odd one out?", options: ["Triangle", "Square", "Circle", "Pentagon"], correct: 2 },
+            { question: "If 3 cats catch 3 mice in 3 minutes, how many cats catch 100 mice in 100 minutes?", options: ["100", "33", "3", "10"], correct: 2 },
+            { question: "What comes next: Monday, Wednesday, Friday, ?", options: ["Sunday", "Tuesday", "Saturday", "Thursday"], correct: 0 },
+            { question: "How many minutes are in 2.5 hours?", options: ["120", "130", "150", "140"], correct: 2 },
+            { question: "Which number is missing: 5, 10, 15, ?, 25", options: ["18", "20", "22", "24"], correct: 1 },
+            { question: "If you're facing North and turn 270° clockwise, which direction are you facing?", options: ["West", "South", "East", "North"], correct: 0 }
+        ];
+
+        function openBrainFlashQuiz() {
+            const quizOverlay = document.getElementById('brainFlashQuiz');
+            quizOverlay.style.display = 'flex';
+            
+            // Load high score
+            loadQuizHighScore();
+            
+            // Start the quiz
+            startBrainFlashQuiz();
+        }
+
+        function closeBrainFlashQuiz() {
+            const quizOverlay = document.getElementById('brainFlashQuiz');
+            quizOverlay.style.display = 'none';
+            
+            // Stop quiz if running
+            if (quizState.isActive) {
+                stopQuizTimer();
+                quizState.isActive = false;
+            }
+            
+            // Reset quiz state
+            resetQuizState();
+        }
+
+        function startBrainFlashQuiz() {
+            // Reset quiz state
+            quizState = {
+                isActive: true,
+                isPaused: false,
+                timeLeft: 60,
+                score: 0,
+                questionCount: 0,
+                currentQuestion: null,
+                timer: null
+            };
+            
+            // Show game content, hide end screen
+            document.getElementById('quizGameContent').style.display = 'block';
+            document.getElementById('quizEndScreen').style.display = 'none';
+            
+            // Update display
+            updateQuizDisplay();
+            
+            // Load first question
+            loadNextQuestion();
+            
+            // Start timer
+            startQuizTimer();
+        }
+
+        function pauseBrainFlashQuiz() {
+            if (!quizState.isActive) return;
+            
+            const pauseBtn = document.getElementById('quizPauseBtn');
+            
+            if (quizState.isPaused) {
+                // Resume
+                quizState.isPaused = false;
+                startQuizTimer();
+                pauseBtn.textContent = '⏸️ Pause';
+                pauseBtn.style.background = 'rgba(0, 0, 0, 0.6)';
+            } else {
+                // Pause
+                quizState.isPaused = true;
+                stopQuizTimer();
+                pauseBtn.textContent = '▶️ Resume';
+                pauseBtn.style.background = 'rgba(57, 255, 20, 0.2)';
+            }
+        }
+
+        function startQuizTimer() {
+            quizState.timer = setInterval(() => {
+                if (!quizState.isPaused && quizState.isActive) {
+                    quizState.timeLeft--;
+                    updateTimerDisplay();
+                    
+                    if (quizState.timeLeft <= 0) {
+                        endBrainFlashQuiz();
+                    }
+                }
+            }, 1000);
+        }
+
+        function stopQuizTimer() {
+            if (quizState.timer) {
+                clearInterval(quizState.timer);
+                quizState.timer = null;
+            }
+        }
+
+        function updateTimerDisplay() {
+            const timerElement = document.getElementById('quizTimer');
+            timerElement.textContent = quizState.timeLeft;
+            
+            // Add warning classes
+            timerElement.className = 'quiz-timer';
+            if (quizState.timeLeft <= 10) {
+                timerElement.classList.add('danger');
+            } else if (quizState.timeLeft <= 20) {
+                timerElement.classList.add('warning');
+            }
+        }
+
+        function updateQuizDisplay() {
+            document.getElementById('quizScore').textContent = quizState.score;
+            document.getElementById('questionNumber').textContent = quizState.questionCount + 1;
+            updateTimerDisplay();
+        }
+
+        function loadNextQuestion() {
+            // Get random question
+            const randomIndex = Math.floor(Math.random() * quizQuestions.length);
+            quizState.currentQuestion = quizQuestions[randomIndex];
+            quizState.questionCount++;
+            
+            // Update question display
+            document.getElementById('quizQuestion').textContent = quizState.currentQuestion.question;
+            
+            // Update options
+            const optionButtons = document.querySelectorAll('.quiz-option');
+            optionButtons.forEach((btn, index) => {
+                btn.textContent = `${String.fromCharCode(65 + index)}. ${quizState.currentQuestion.options[index]}`;
+                btn.className = 'quiz-option';
+                btn.disabled = false;
+            });
+            
+            // Clear feedback
+            const feedback = document.getElementById('quizFeedback');
+            feedback.style.opacity = '0';
+            feedback.className = 'quiz-feedback';
+            
+            // Update display
+            updateQuizDisplay();
+        }
+
+        function selectQuizAnswer(selectedIndex) {
+            if (!quizState.isActive || quizState.isPaused) return;
+            
+            const optionButtons = document.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('quizFeedback');
+            const correctIndex = quizState.currentQuestion.correct;
+            
+            // Disable all buttons
+            optionButtons.forEach(btn => btn.disabled = true);
+            
+            // Show correct/incorrect styling
+            optionButtons[selectedIndex].classList.add(selectedIndex === correctIndex ? 'correct' : 'incorrect');
+            optionButtons[correctIndex].classList.add('correct');
+            
+            // Update score and show feedback
+            if (selectedIndex === correctIndex) {
+                quizState.score++;
+                feedback.textContent = '✅ Correct! +1 point';
+                feedback.className = 'quiz-feedback correct';
+            } else {
+                feedback.textContent = '❌ Incorrect! Try the next one';
+                feedback.className = 'quiz-feedback incorrect';
+            }
+            
+            feedback.style.opacity = '1';
+            
+            // Update score display
+            document.getElementById('quizScore').textContent = quizState.score;
+            
+            // Load next question after delay
+            setTimeout(() => {
+                if (quizState.isActive) {
+                    loadNextQuestion();
+                }
+            }, 1500);
+        }
+
+        function endBrainFlashQuiz() {
+            quizState.isActive = false;
+            stopQuizTimer();
+            
+            // Hide game content, show end screen
+            document.getElementById('quizGameContent').style.display = 'none';
+            document.getElementById('quizEndScreen').style.display = 'block';
+            
+            // Update final score
+            document.getElementById('finalScore').textContent = quizState.score;
+            
+            // Update performance message
+            const performance = document.getElementById('quizPerformance');
+            let message = '';
+            if (quizState.score >= 15) {
+                message = '🏆 Outstanding! You\'re a genius!';
+            } else if (quizState.score >= 10) {
+                message = '🎯 Excellent work! Great focus!';
+            } else if (quizState.score >= 6) {
+                message = '👍 Good job! Keep practicing!';
+            } else {
+                message = '💪 Nice try! You\'ll do better next time!';
+            }
+            performance.textContent = message;
+            
+            // Check and update high score
+            updateQuizHighScore();
+        }
+
+        function loadQuizHighScore() {
+            const highScore = localStorage.getItem('brainFlashQuizHighScore') || '0';
+            document.getElementById('quizHighScore').textContent = highScore;
+        }
+
+        function updateQuizHighScore() {
+            const currentHighScore = parseInt(localStorage.getItem('brainFlashQuizHighScore') || '0');
+            if (quizState.score > currentHighScore) {
+                localStorage.setItem('brainFlashQuizHighScore', quizState.score.toString());
+                document.getElementById('quizHighScore').textContent = quizState.score;
+                
+                // Show new high score message
+                const performance = document.getElementById('quizPerformance');
+                performance.innerHTML = '🎉 NEW HIGH SCORE! 🎉<br>' + performance.textContent;
+            }
+        }
+
+        function resetQuizState() {
+            quizState = {
+                isActive: false,
+                isPaused: false,
+                timeLeft: 60,
+                score: 0,
+                questionCount: 0,
+                currentQuestion: null,
+                timer: null
+            };
+            
+            // Reset pause button
+            const pauseBtn = document.getElementById('quizPauseBtn');
+            pauseBtn.textContent = '⏸️ Pause';
+            pauseBtn.style.background = 'rgba(0, 0, 0, 0.6)';
         }
         
     </script>

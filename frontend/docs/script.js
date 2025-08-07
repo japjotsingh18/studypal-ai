@@ -226,7 +226,11 @@ function playGame(gameType) {
     // Game is unlocked, show the game content
     switch (gameType) {
         case 'palindrome':
-            addAIMessage("🎮 Palindrome Challenge: Is 'racecar' a palindrome? Take a 5-minute break and come back refreshed!");
+            addAIMessage("🎮 Opening Palindrome Challenge! Test your word skills and take a well-deserved break! 🧠");
+            // Open the palindrome game
+            if (typeof openPalindromeGame === 'function') {
+                openPalindromeGame();
+            }
             break;
         case 'quiz':
             addAIMessage("🧠 Brain Flash Quiz: Quick! Name 3 study techniques we've discussed. Great job taking a brain break!");
@@ -508,5 +512,60 @@ async function saveSessionToBackend(totalTime, sessionCount) {
     } catch (error) {
         console.error('Error saving session:', error);
     }
+}
+
+// TEMPORARY FUNCTION FOR TESTING - Remove this after testing
+function testPalindromeGame() {
+    console.log('Testing palindrome game...');
+    
+    // Temporarily unlock the game
+    const game1 = document.getElementById('game1');
+    if (game1) {
+        game1.classList.remove('locked');
+        game1.classList.add('unlocked');
+    }
+    
+    // Show unlock message
+    const unlockMsg = document.getElementById('unlockMessage');
+    if (unlockMsg) {
+        unlockMsg.style.display = 'block';
+    }
+    
+    // Add AI message
+    addAIMessage("🧪 Testing mode: Palindrome Challenge unlocked for testing! Click the palindrome card to test the game.");
+    
+    // Show toast notification
+    showToast('🧪 Test mode: Palindrome game unlocked!');
+}
+
+// TEMPORARY FUNCTION FOR TESTING BRAIN FLASH QUIZ - Remove this after testing
+function testBrainFlashQuiz() {
+    console.log('Testing Brain Flash Quiz...');
+    
+    // Temporarily unlock the quiz game
+    const game2 = document.getElementById('game2');
+    if (game2) {
+        game2.classList.remove('locked');
+        game2.classList.add('unlocked');
+    }
+    
+    // Show unlock message
+    const unlockMsg = document.getElementById('unlockMessage');
+    if (unlockMsg) {
+        unlockMsg.style.display = 'block';
+    }
+    
+    // Add AI message
+    addAIMessage("🧪 Testing mode: Brain Flash Quiz unlocked for testing! Click the quiz card to test the game.");
+    
+    // Show toast notification
+    showToast('🧪 Test mode: Brain Flash Quiz unlocked!');
+    
+    // Automatically open the quiz for immediate testing
+    setTimeout(() => {
+        if (typeof openBrainFlashQuiz === 'function') {
+            openBrainFlashQuiz();
+        }
+    }, 1000);
 }
 
