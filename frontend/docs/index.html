@@ -104,16 +104,17 @@
         </div>
     </div>
 
-    <!-- Custom Modal for Finish Session -->
+    <!-- Custom Confirmation Modal -->
 <div id="customModal" class="custom-modal">
     <div class="modal-content">
         <div class="modal-header">
             <span class="modal-icon">⚠️</span>
             <h3 class="modal-title">Finish Session</h3>
         </div>
-        <div class="modal-message">
-            Are you sure you want to finish this session? This will reset your progress and lock all games.
-        </div>
+        <p class="modal-message">
+            Are you sure you want to finish this session?<br>
+            This will reset your progress and lock all games.
+        </p>
         <div class="modal-buttons">
             <button class="modal-btn modal-btn-cancel" onclick="closeCustomModal()">Cancel</button>
             <button class="modal-btn modal-btn-confirm" onclick="confirmFinishSession()">Finish Session</button>
@@ -134,11 +135,9 @@
                 historySection.style.display = 'block';
                 historyBtn.textContent = '📊 Hide History';
                 
-                // Load history data only when first opened
-                if (!historyLoaded) {
-                    loadStudyHistory();
-                    historyLoaded = true;
-                }
+                // Always reload history data to show latest sessions
+                loadStudyHistory();
+                historyLoaded = true;
                 
                 // Smooth scroll to history section
                 setTimeout(() => {
@@ -165,7 +164,7 @@
             const chartContainer = document.getElementById('chartContainer');
             
             try {
-                const response = await fetch('http://127.0.0.1:5000/api/get-sessions');
+                const response = await fetch('http://127.0.0.1:5001/api/get-sessions');
                 const data = await response.json();
                 
                 if (!response.ok) {
@@ -280,6 +279,15 @@
                     }
                 }
             });
+        }
+        
+        // Function to refresh history if it's currently visible
+        function refreshHistoryIfVisible() {
+            const historySection = document.getElementById('historySection');
+            if (historySection && historySection.style.display !== 'none') {
+                console.log('Refreshing history data...');
+                loadStudyHistory();
+            }
         }
         
     </script>

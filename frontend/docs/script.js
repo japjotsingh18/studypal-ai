@@ -367,7 +367,7 @@ async function confirmFinishSession() {
         try {
             const sessionData = {
                 totalTime: timer.seconds,
-                sessionCount: 1
+                sessionCount: stats.sessions
             };
             
             const response = await fetch('http://127.0.0.1:5001/api/save-session', {
@@ -433,6 +433,13 @@ async function confirmFinishSession() {
     // Add AI message
     addAIMessage("🎉 Session completed and saved! Your study time has been recorded. Start a new session whenever you're ready!");
     
+    // Refresh history if it's currently visible
+    if (typeof refreshHistoryIfVisible === 'function') {
+        setTimeout(() => {
+            refreshHistoryIfVisible();
+        }, 500); // Small delay to ensure session is saved
+    }
+    
     console.log('Session finished, saved, and reset');
 }
 
@@ -483,5 +490,23 @@ function resetUnlockFlags() {
     }
     
     console.log('Unlock flags reset for new session');
+}
+
+async function saveSessionToBackend(totalTime, sessionCount) {
+    try {
+        const sessionData = { totalTime, sessionCount };
+        const response = await fetch('http://127.0.0.1:5001/api/save-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(sessionData)
+        });
+        if (response.ok) {
+            console.log('Session saved successfully');
+        } else {
+            console.error('Failed to save session');
+        }
+    } catch (error) {
+        console.error('Error saving session:', error);
+    }
 }
 
