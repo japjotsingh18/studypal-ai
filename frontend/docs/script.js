@@ -80,7 +80,7 @@ let timer = {
         // Utility function to get total study time from backend
 async function getTotalStudyTime() {
     try {
-        const res = await fetch('http://127.0.0.1:5000/api/get-sessions');
+        const res = await fetch('http://127.0.0.1:5001/api/get-sessions');
         const data = await res.json();
         if (data.sessions) {
             return data.sessions.reduce((sum, s) => sum + s.total_time, 0);
@@ -190,27 +190,37 @@ function updateUnlockProgress(currentMinutes) {
 
 // Helper function to update individual game progress
 function updateGameProgress(gameElement, progress, remaining) {
-    let progressBar = gameElement.querySelector('.progress-indicator');
-    if (!progressBar) {
-        progressBar = document.createElement('div');
-        progressBar.className = 'progress-indicator';
-        progressBar.innerHTML = `
-            <div class="progress-bar-mini">
-                <div class="progress-fill"></div>
-            </div>
-            <div class="progress-text">${remaining} min remaining</div>
-        `;
-        gameElement.appendChild(progressBar);
+    console.log(`Updating game ${gameElement.id} with progress ${progress}% and ${remaining} minutes remaining`);
+    
+    // Update the circular progress ring
+    const progressRing = gameElement.querySelector('.progress-ring-progress-mini');
+    if (progressRing) {
+        const circumference = 157; // 2 * π * 25
+        const offset = circumference - (progress / 100) * circumference;
+        progressRing.style.strokeDashoffset = offset;
+        console.log(`Updated circular progress for ${gameElement.id}: offset ${offset}`);
+    } else {
+        console.log(`No progress ring found for ${gameElement.id}`);
     }
     
-    const progressFill = progressBar.querySelector('.progress-fill');
-    const progressText = progressBar.querySelector('.progress-text');
-    
-    if (progressFill) {
-        progressFill.style.width = `${Math.min(progress, 100)}%`;
+    // Update the bottom progress bar
+    const progressBarFill = gameElement.querySelector('.progress-bar-fill');
+    if (progressBarFill) {
+        progressBarFill.style.width = `${Math.min(progress, 100)}%`;
+        console.log(`Updated progress bar for ${gameElement.id}: width ${Math.min(progress, 100)}%`);
+    } else {
+        console.log(`No progress bar fill found for ${gameElement.id}`);
     }
-    if (progressText) {
-        progressText.textContent = `${remaining} min remaining`;
+    
+    // Update the unlock text
+    const unlockText = gameElement.querySelector('.unlock-text');
+    if (unlockText && remaining > 0) {
+        const gameId = gameElement.id;
+        const requiredMinutes = gameId === 'game1' ? 20 : 40;
+        unlockText.textContent = `Unlock: ${Math.ceil(remaining)} minutes remaining`;
+        console.log(`Updated unlock text for ${gameElement.id}: ${unlockText.textContent}`);
+    } else if (!unlockText) {
+        console.log(`No unlock text found for ${gameElement.id}`);
     }
 }
 
@@ -272,17 +282,40 @@ function showToast(message) {
 
 // Add event listener when DOM is loaded
 window.addEventListener('DOMContentLoaded', () => {
+    initializeGameProgress(); // Initialize the progress indicators
     checkGameUnlocks(); // Check unlock status on page load
     
     // Check unlocks periodically (every 30 seconds)
     setInterval(checkGameUnlocks, 30000);
 });
 
+// Initialize game progress indicators
+function initializeGameProgress() {
+    const games = ['game1', 'game2', 'game3'];
+    games.forEach(gameId => {
+        const gameElement = document.getElementById(gameId);
+        if (gameElement) {
+            // Reset circular progress
+            const progressRing = gameElement.querySelector('.progress-ring-progress-mini');
+            if (progressRing) {
+                progressRing.style.strokeDashoffset = '157'; // Full circle
+            }
+            
+            // Reset bottom progress bar
+            const progressBarFill = gameElement.querySelector('.progress-bar-fill');
+            if (progressBarFill) {
+                progressBarFill.style.width = '0%';
+            }
+        }
+    });
+}
+
         function updateStats() {
             document.getElementById('totalTime').textContent = `${Math.floor(stats.totalTime / 60)}m`;
             document.getElementById('sessionsCount').textContent = stats.sessions;
         }
 
+        /* DISABLED - Using better sendMessage function from HTML file
         function sendMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
@@ -293,7 +326,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 
                 // Simulate AI response
                 // Send message to backend for AI response
-fetch('http://127.0.0.1:5000/api/chat', {
+fetch('http://127.0.0.1:5001/api/chat', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -315,23 +348,24 @@ fetch('http://127.0.0.1:5000/api/chat', {
 
             }
         }
+        */
 
-        function addUserMessage(message) {
-            const chatMessages = document.getElementById('chatMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'message user-message';
-            messageDiv.textContent = message;
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
+        // Simple addAIMessage function for script.js compatibility
         function addAIMessage(message) {
             const chatMessages = document.getElementById('chatMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'message ai-message';
-            messageDiv.textContent = message;
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            if (chatMessages) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message ai-message';
+                
+                const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                messageDiv.innerHTML = `
+                    <div>${message}</div>
+                    <div class="message-time">${currentTime}</div>
+                `;
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
         }
 
         function addAIMessageTypingEffect(text) {

@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudyPal AI</title>
     <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
 </head>
 <body>
     <div class="header">
         <h1>StudyPal AI</h1>
-        <button class="btn history-btn" onclick="toggleHistory()">📊 Study History</button>
+        <button class="btn history-btn" onclick="toggleHistory()"><i class="fa-solid fa-chart-line"></i> Study History</button>
     </div>
 
     <div class="container main-content">
@@ -26,8 +27,10 @@
                 </div>
             </div>
             <div class="chat-input">
-                <input type="text" id="chatInput" placeholder="Ask me anything about studying...">
-                <button class="btn" onclick="sendMessage()">Send</button>
+                <input type="text" id="chatInput" placeholder="Ask me anything about studying, productivity, or motivation..." maxlength="500">
+                <button class="btn" onclick="sendMessage()">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
             </div>
         </div>
 
@@ -46,8 +49,8 @@
                         <circle class="progress-bar" cx="100" cy="100" r="90" 
                                 stroke-dasharray="565.48" stroke-dashoffset="565.48" id="progressBar"/>
                     </svg>
+                    <div class="timer-display" id="timerDisplay">00:00</div>
                 </div>
-                <div class="timer-display" id="timerDisplay">00:00</div>
                 <div class="motivation-text" id="motivationText">Ready to focus? Start your study session!</div>
                 <button class="btn start-btn" id="startBtn" onclick="toggleTimer()">Start Study Session</button>
                 <button class="btn finish-btn" id="finishBtn" onclick="finishSession()" style="display: none;">Finish Session</button>
@@ -65,7 +68,7 @@
             </div>
 
             <div class="games-section" id="gamesSection">
-                <h3>🎮 Game Rewards</h3>
+                <h3><i class="fa-solid fa-gamepad"></i> Game Rewards</h3>
                 <div class="unlock-message" id="unlockMessage" style="display: none;">
                     🎉 You've earned a break! Choose a mini-game.
                 </div>
@@ -91,7 +94,7 @@
     <!-- History Section (Below main content) -->
     <div class="history-section" id="historySection" style="display: none;">
         <div class="history-header">
-            <h2>📊 Study History</h2>
+            <h2><i class="fa-solid fa-chart-line"></i> Study History</h2>
         </div>
         
         <div class="history-content">
@@ -181,7 +184,20 @@
 
     <!-- Custom Modal -->
     <div id="customModal" class="custom-modal">
-        <div class="custom-modal-content">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-icon">⚠️</span>
+                <h3 class="modal-title">Finish Study Session</h3>
+            </div>
+            <div class="modal-message">
+                Are you sure you want to finish your current study session? Your progress will be saved.
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeCustomModal()">Cancel</button>
+                <button class="modal-btn modal-btn-confirm" onclick="confirmFinishSession()">Finish Session</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Palindrome Challenge Mini-Game -->
     <div id="palindromeGame" class="palindrome-game-overlay" style="display: none;">
@@ -271,6 +287,232 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // Enhanced Chat Functions
+        async function sendMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const message = chatInput.value.trim();
+            
+            if (message) {
+                // Add user message to chat
+                addUserMessage(message);
+                chatInput.value = '';
+                
+                // Show typing indicator
+                showTypingIndicator();
+                
+                try {
+                    // Send message to backend with timeout
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+                    
+                    const response = await fetch('http://127.0.0.1:5001/api/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: message }),
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Hide typing indicator
+                    hideTypingIndicator();
+                    
+                    if (data.reply) {
+                        // Add AI response to chat
+                        addAIMessageHTML(data.reply);
+                    } else if (data.error) {
+                        addAIMessageHTML(`Sorry, there was an error: ${data.error}`);
+                    } else {
+                        addAIMessageHTML('Sorry, I received an unexpected response. Please try again.');
+                    }
+                } catch (error) {
+                    hideTypingIndicator();
+                    console.error('Chat error:', error);
+                    
+                    if (error.name === 'AbortError') {
+                        addAIMessageHTML('Request timed out. Please check your connection and try again.');
+                    } else if (error.message.includes('Failed to fetch')) {
+                        addAIMessageHTML('Cannot connect to StudyPal AI backend. Please make sure the server is running on port 5001.');
+                    } else {
+                        addAIMessageHTML(`Connection error: ${error.message}`);
+                    }
+                }
+            }
+        }
+        
+        function addUserMessage(text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user-message';
+            
+            const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            messageDiv.innerHTML = `
+                <div>${text}</div>
+                <div class="message-time">${currentTime}</div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function addAIMessageHTML(text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai-message';
+            
+            const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            messageDiv.innerHTML = `
+                <div>${text}</div>
+                <div class="message-time">${currentTime}</div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message ai-message typing-indicator';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = '<div style="opacity: 0.7; font-style: italic;">StudyPal AI is typing...</div>';
+            
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+        
+        // Add connection test function
+        async function testBackendConnection() {
+            try {
+                const response = await fetch('http://127.0.0.1:5001/api/get-sessions', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (response.ok) {
+                    console.log('✅ Backend connection successful');
+                    return true;
+                } else {
+                    console.error('❌ Backend connection failed:', response.status, response.statusText);
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Backend connection error:', error);
+                return false;
+            }
+        }
+        
+        // Test connection on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                chatInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage();
+                    }
+                });
+            }
+            
+            // Test backend connection
+            console.log('🔄 Testing backend connection...');
+            const isConnected = await testBackendConnection();
+            
+            if (!isConnected) {
+                // Add connection error message to chat
+                const chatMessages = document.getElementById('chatMessages');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'message ai-message error-message';
+                errorDiv.innerHTML = `
+                    <div style="color: #ff6b6b;">
+                        ⚠️ Cannot connect to StudyPal AI backend. Please make sure the server is running on http://127.0.0.1:5001
+                    </div>
+                `;
+                chatMessages.appendChild(errorDiv);
+            } else {
+                console.log('✅ Backend is ready!');
+            }
+        });
+        
+        // Add message time styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .message {
+                margin-bottom: 1rem;
+                padding: 1rem;
+                border-radius: 12px;
+                max-width: 85%;
+                position: relative;
+                animation: messageSlideIn 0.3s ease-out;
+            }
+            
+            @keyframes messageSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            .message.ai-message {
+                background: linear-gradient(135deg, rgba(0, 245, 255, 0.1), rgba(57, 255, 20, 0.1));
+                border: 1px solid rgba(0, 245, 255, 0.3);
+                color: #e0e0e0;
+                margin-right: auto;
+            }
+            
+            .message.user-message {
+                background: linear-gradient(135deg, rgba(57, 255, 20, 0.1), rgba(0, 245, 255, 0.1));
+                border: 1px solid rgba(57, 255, 20, 0.3);
+                color: #e0e0e0;
+                margin-left: auto;
+            }
+            
+            .message.error-message {
+                background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 107, 107, 0.1));
+                border: 1px solid rgba(255, 107, 107, 0.3);
+                color: #e0e0e0;
+                margin-right: auto;
+            }
+            
+            .message-time {
+                font-size: 0.7rem;
+                color: rgba(224, 224, 224, 0.5);
+                margin-top: 0.5rem;
+                text-align: right;
+            }
+            
+            .typing-indicator {
+                animation: typingPulse 1.5s ease-in-out infinite;
+            }
+            
+            @keyframes typingPulse {
+                0%, 100% { opacity: 0.7; }
+                50% { opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+        
         let historyLoaded = false;
         
         // Toggle history section visibility
@@ -295,7 +537,7 @@
                 }, 100);
             } else {
                 historySection.style.display = 'none';
-                historyBtn.textContent = '📊 Study History';
+                historyBtn.innerHTML = '<i class="fa-solid fa-chart-line"></i> Study History';
                 
                 // Scroll back to top
                 window.scrollTo({ 
