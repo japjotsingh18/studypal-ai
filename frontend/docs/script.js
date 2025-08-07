@@ -233,10 +233,18 @@ function playGame(gameType) {
             }
             break;
         case 'quiz':
-            addAIMessage("🧠 Brain Flash Quiz: Quick! Name 3 study techniques we've discussed. Great job taking a brain break!");
+            addAIMessage("🧠 Opening Brain Flash Quiz! Quick thinking and fast reflexes - let's test your mental agility!");
+            // Open the brain flash quiz
+            if (typeof openBrainFlashQuiz === 'function') {
+                openBrainFlashQuiz();
+            }
             break;
         case 'emoji':
-            addAIMessage("😊 Emoji Puzzle: Can you decode this? 📚+⏰+🧠 = ? (Answer: Effective studying!) Time for a quick stretch!");
+            addAIMessage("🧩 Opening Emoji Puzzle! Test your memory with this fun sequence game - can you remember the pattern?");
+            // Open the emoji puzzle game
+            if (typeof openEmojiPuzzle === 'function') {
+                openEmojiPuzzle();
+            }
             break;
     }
 }
@@ -565,6 +573,37 @@ function testBrainFlashQuiz() {
     setTimeout(() => {
         if (typeof openBrainFlashQuiz === 'function') {
             openBrainFlashQuiz();
+        }
+    }, 1000);
+}
+
+// TEMPORARY FUNCTION FOR TESTING EMOJI PUZZLE - Remove this after testing
+function testEmojiPuzzle() {
+    console.log('Testing Emoji Puzzle...');
+    
+    // Temporarily unlock the emoji game
+    const game3 = document.getElementById('game3');
+    if (game3) {
+        game3.classList.remove('locked');
+        game3.classList.add('unlocked');
+    }
+    
+    // Show unlock message
+    const unlockMsg = document.getElementById('unlockMessage');
+    if (unlockMsg) {
+        unlockMsg.style.display = 'block';
+    }
+    
+    // Add AI message
+    addAIMessage("🧪 Testing mode: Emoji Puzzle unlocked for testing! Click the emoji card to test the memory game.");
+    
+    // Show toast notification
+    showToast('🧪 Test mode: Emoji Puzzle unlocked!');
+    
+    // Automatically open the emoji puzzle for immediate testing
+    setTimeout(() => {
+        if (typeof openEmojiPuzzle === 'function') {
+            openEmojiPuzzle();
         }
     }, 1000);
 }

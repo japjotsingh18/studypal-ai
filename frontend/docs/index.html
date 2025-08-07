@@ -105,22 +105,83 @@
     </div>
 
     <!-- Custom Confirmation Modal -->
-<div id="customModal" class="custom-modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <span class="modal-icon">⚠️</span>
-            <h3 class="modal-title">Finish Session</h3>
-        </div>
-        <p class="modal-message">
-            Are you sure you want to finish this session?<br>
-            This will reset your progress and lock all games.
-        </p>
-        <div class="modal-buttons">
-            <button class="modal-btn modal-btn-cancel" onclick="closeCustomModal()">Cancel</button>
-            <button class="modal-btn modal-btn-confirm" onclick="confirmFinishSession()">Finish Session</button>
+    </div>
+
+    <!-- Emoji Puzzle Game Overlay -->
+    <div id="emojiPuzzleGame" class="emoji-game-overlay" style="display: none;">
+        <div class="emoji-game-container">
+            <div class="emoji-game-header">
+                <h2>🧩 Emoji Puzzle</h2>
+                <div class="emoji-game-stats">
+                    <div class="emoji-stat">
+                        <span class="emoji-stat-label">High Score:</span>
+                        <span id="emojiHighScore">0</span>
+                    </div>
+                    <div class="emoji-stat">
+                        <span class="emoji-stat-label">Time:</span>
+                        <span id="emojiTimer" class="emoji-timer">60</span>
+                    </div>
+                    <div class="emoji-stat">
+                        <span class="emoji-stat-label">Round:</span>
+                        <span id="emojiRound">1</span>
+                    </div>
+                </div>
+                <button onclick="closeEmojiPuzzle()" class="emoji-close-btn">✕</button>
+            </div>
+
+            <div id="emojiGameContent" class="emoji-game-content">
+                <div class="emoji-sequence-display">
+                    <h3>Watch the sequence:</h3>
+                    <div id="emojiSequenceContainer" class="emoji-sequence-container"></div>
+                </div>
+
+                <div class="emoji-input-section">
+                    <h3>Repeat the sequence:</h3>
+                    <div id="emojiInputContainer" class="emoji-input-container"></div>
+                    <div class="emoji-selection-grid" id="emojiGrid">
+                        <button class="emoji-btn" data-emoji="😃">😃</button>
+                        <button class="emoji-btn" data-emoji="🐶">🐶</button>
+                        <button class="emoji-btn" data-emoji="🍎">🍎</button>
+                        <button class="emoji-btn" data-emoji="🌟">🌟</button>
+                        <button class="emoji-btn" data-emoji="🚀">🚀</button>
+                        <button class="emoji-btn" data-emoji="🎵">🎵</button>
+                        <button class="emoji-btn" data-emoji="🔥">🔥</button>
+                        <button class="emoji-btn" data-emoji="💎">💎</button>
+                        <button class="emoji-btn" data-emoji="🌈">🌈</button>
+                        <button class="emoji-btn" data-emoji="⚡">⚡</button>
+                        <button class="emoji-btn" data-emoji="🎯">🎯</button>
+                        <button class="emoji-btn" data-emoji="🏆">🏆</button>
+                    </div>
+                </div>
+
+                <div class="emoji-feedback" id="emojiFeedback"></div>
+
+                <div class="emoji-game-controls">
+                    <button id="emojiPauseBtn" onclick="pauseEmojiPuzzle()" class="emoji-control-btn">⏸️ Pause</button>
+                    <button onclick="startEmojiPuzzle()" class="emoji-control-btn">🔄 Restart</button>
+                </div>
+            </div>
+
+            <div id="emojiEndScreen" class="emoji-end-screen" style="display: none;">
+                <h2>🎮 Game Over!</h2>
+                <div class="emoji-final-stats">
+                    <div class="emoji-final-score">
+                        <span class="emoji-score-label">Final Score:</span>
+                        <span id="emojiFinalScore" class="emoji-score-value">0</span>
+                    </div>
+                    <div id="emojiPerformance" class="emoji-performance-message"></div>
+                </div>
+                <div class="emoji-end-controls">
+                    <button onclick="startEmojiPuzzle()" class="emoji-control-btn primary">🔄 Play Again</button>
+                    <button onclick="closeEmojiPuzzle()" class="emoji-control-btn">❌ Close</button>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- Custom Modal -->
+    <div id="customModal" class="custom-modal">
+        <div class="custom-modal-content">
 
     <!-- Palindrome Challenge Mini-Game -->
     <div id="palindromeGame" class="palindrome-game-overlay" style="display: none;">
@@ -727,6 +788,350 @@
             pauseBtn.textContent = '⏸️ Pause';
             pauseBtn.style.background = 'rgba(0, 0, 0, 0.6)';
         }
+        
+        // Emoji Puzzle Game Functions
+        let emojiGameState = {
+            isActive: false,
+            isPaused: false,
+            timeLeft: 60,
+            round: 1,
+            sequence: [],
+            userInput: [],
+            timer: null,
+            showingSequence: false,
+            sequenceIndex: 0
+        };
+
+        const emojiOptions = ['😃', '🐶', '🍎', '🌟', '🚀', '🎵', '🔥', '💎', '🌈', '⚡', '🎯', '🏆'];
+
+        function openEmojiPuzzle() {
+            const emojiOverlay = document.getElementById('emojiPuzzleGame');
+            emojiOverlay.style.display = 'flex';
+            
+            // Load high score
+            loadEmojiHighScore();
+            
+            // Start the game
+            startEmojiPuzzle();
+        }
+
+        function closeEmojiPuzzle() {
+            const emojiOverlay = document.getElementById('emojiPuzzleGame');
+            emojiOverlay.style.display = 'none';
+            
+            // Stop game if running
+            if (emojiGameState.isActive) {
+                stopEmojiTimer();
+                emojiGameState.isActive = false;
+            }
+            
+            // Reset game state
+            resetEmojiGameState();
+        }
+
+        function startEmojiPuzzle() {
+            // Reset game state
+            emojiGameState = {
+                isActive: true,
+                isPaused: false,
+                timeLeft: 60,
+                round: 1,
+                sequence: [],
+                userInput: [],
+                timer: null,
+                showingSequence: false,
+                sequenceIndex: 0
+            };
+            
+            // Show game content, hide end screen
+            document.getElementById('emojiGameContent').style.display = 'block';
+            document.getElementById('emojiEndScreen').style.display = 'none';
+            
+            // Update display
+            updateEmojiDisplay();
+            
+            // Start first round
+            startNewRound();
+            
+            // Start timer
+            startEmojiTimer();
+        }
+
+        function pauseEmojiPuzzle() {
+            if (!emojiGameState.isActive) return;
+            
+            const pauseBtn = document.getElementById('emojiPauseBtn');
+            
+            if (emojiGameState.isPaused) {
+                // Resume
+                emojiGameState.isPaused = false;
+                startEmojiTimer();
+                pauseBtn.textContent = '⏸️ Pause';
+                pauseBtn.style.background = 'rgba(0, 0, 0, 0.6)';
+            } else {
+                // Pause
+                emojiGameState.isPaused = true;
+                stopEmojiTimer();
+                pauseBtn.textContent = '▶️ Resume';
+                pauseBtn.style.background = 'rgba(57, 255, 20, 0.2)';
+            }
+        }
+
+        function startEmojiTimer() {
+            emojiGameState.timer = setInterval(() => {
+                if (!emojiGameState.isPaused && emojiGameState.isActive) {
+                    emojiGameState.timeLeft--;
+                    updateEmojiTimerDisplay();
+                    
+                    if (emojiGameState.timeLeft <= 0) {
+                        endEmojiPuzzle();
+                    }
+                }
+            }, 1000);
+        }
+
+        function stopEmojiTimer() {
+            if (emojiGameState.timer) {
+                clearInterval(emojiGameState.timer);
+                emojiGameState.timer = null;
+            }
+        }
+
+        function updateEmojiTimerDisplay() {
+            const timerElement = document.getElementById('emojiTimer');
+            timerElement.textContent = emojiGameState.timeLeft;
+            
+            // Add warning classes
+            timerElement.className = 'emoji-timer';
+            if (emojiGameState.timeLeft <= 10) {
+                timerElement.classList.add('danger');
+            } else if (emojiGameState.timeLeft <= 20) {
+                timerElement.classList.add('warning');
+            }
+        }
+
+        function updateEmojiDisplay() {
+            document.getElementById('emojiRound').textContent = emojiGameState.round;
+            updateEmojiTimerDisplay();
+        }
+
+        function startNewRound() {
+            // Add new emoji to sequence
+            const randomEmoji = emojiOptions[Math.floor(Math.random() * emojiOptions.length)];
+            emojiGameState.sequence.push(randomEmoji);
+            emojiGameState.userInput = [];
+            
+            // Clear input container
+            const inputContainer = document.getElementById('emojiInputContainer');
+            inputContainer.innerHTML = '';
+            
+            // Clear feedback
+            const feedback = document.getElementById('emojiFeedback');
+            feedback.style.opacity = '0';
+            feedback.className = 'emoji-feedback';
+            
+            // Show sequence to user
+            showEmojiSequence();
+        }
+
+        function showEmojiSequence() {
+            emojiGameState.showingSequence = true;
+            emojiGameState.sequenceIndex = 0;
+            
+            const sequenceContainer = document.getElementById('emojiSequenceContainer');
+            sequenceContainer.innerHTML = '';
+            
+            // Create sequence display elements
+            emojiGameState.sequence.forEach((emoji, index) => {
+                const emojiDiv = document.createElement('div');
+                emojiDiv.className = 'emoji-sequence-item';
+                emojiDiv.textContent = emoji;
+                sequenceContainer.appendChild(emojiDiv);
+            });
+            
+            // Disable emoji buttons during sequence display
+            disableEmojiButtons(true);
+            
+            // Highlight sequence with delays
+            highlightSequence();
+        }
+
+        function highlightSequence() {
+            const sequenceItems = document.querySelectorAll('.emoji-sequence-item');
+            
+            function highlightNext() {
+                if (emojiGameState.sequenceIndex < sequenceItems.length) {
+                    // Remove previous highlight
+                    sequenceItems.forEach(item => item.classList.remove('highlighting'));
+                    
+                    // Add current highlight
+                    sequenceItems[emojiGameState.sequenceIndex].classList.add('highlighting');
+                    
+                    emojiGameState.sequenceIndex++;
+                    
+                    setTimeout(highlightNext, 800);
+                } else {
+                    // Sequence display finished
+                    setTimeout(() => {
+                        // Remove all highlights
+                        sequenceItems.forEach(item => item.classList.remove('highlighting'));
+                        
+                        // Clear sequence display
+                        document.getElementById('emojiSequenceContainer').innerHTML = '<p style="color: #39ff14; font-family: \'Roboto Mono\', monospace;">Now repeat the sequence!</p>';
+                        
+                        // Enable emoji buttons
+                        disableEmojiButtons(false);
+                        emojiGameState.showingSequence = false;
+                    }, 500);
+                }
+            }
+            
+            highlightNext();
+        }
+
+        function disableEmojiButtons(disabled) {
+            const emojiButtons = document.querySelectorAll('.emoji-btn');
+            emojiButtons.forEach(btn => {
+                btn.disabled = disabled;
+                if (disabled) {
+                    btn.style.opacity = '0.5';
+                    btn.style.pointerEvents = 'none';
+                } else {
+                    btn.style.opacity = '1';
+                    btn.style.pointerEvents = 'auto';
+                }
+            });
+        }
+
+        function selectEmoji(emoji) {
+            if (!emojiGameState.isActive || emojiGameState.isPaused || emojiGameState.showingSequence) return;
+            
+            // Add to user input
+            emojiGameState.userInput.push(emoji);
+            
+            // Update input display
+            updateEmojiInputDisplay();
+            
+            // Check if input matches sequence so far
+            const currentIndex = emojiGameState.userInput.length - 1;
+            const isCorrect = emojiGameState.userInput[currentIndex] === emojiGameState.sequence[currentIndex];
+            
+            if (!isCorrect) {
+                // Wrong emoji - end game
+                showEmojiFeedback('❌ Wrong sequence! Game Over!', 'incorrect');
+                setTimeout(() => {
+                    endEmojiPuzzle();
+                }, 2000);
+            } else if (emojiGameState.userInput.length === emojiGameState.sequence.length) {
+                // Completed sequence correctly
+                showEmojiFeedback('✅ Perfect! Next round!', 'correct');
+                emojiGameState.round++;
+                updateEmojiDisplay();
+                
+                setTimeout(() => {
+                    startNewRound();
+                }, 1500);
+            }
+        }
+
+        function updateEmojiInputDisplay() {
+            const inputContainer = document.getElementById('emojiInputContainer');
+            inputContainer.innerHTML = '';
+            
+            emojiGameState.userInput.forEach(emoji => {
+                const emojiDiv = document.createElement('div');
+                emojiDiv.className = 'emoji-input-item';
+                emojiDiv.textContent = emoji;
+                inputContainer.appendChild(emojiDiv);
+            });
+        }
+
+        function showEmojiFeedback(message, type) {
+            const feedback = document.getElementById('emojiFeedback');
+            feedback.textContent = message;
+            feedback.className = `emoji-feedback ${type}`;
+            feedback.style.opacity = '1';
+        }
+
+        function endEmojiPuzzle() {
+            emojiGameState.isActive = false;
+            stopEmojiTimer();
+            
+            // Hide game content, show end screen
+            document.getElementById('emojiGameContent').style.display = 'none';
+            document.getElementById('emojiEndScreen').style.display = 'block';
+            
+            // Calculate final score (rounds completed - 1)
+            const finalScore = emojiGameState.round - 1;
+            document.getElementById('emojiFinalScore').textContent = finalScore;
+            
+            // Update performance message
+            const performance = document.getElementById('emojiPerformance');
+            let message = '';
+            if (finalScore >= 10) {
+                message = '🏆 Incredible! You have an amazing memory!';
+            } else if (finalScore >= 7) {
+                message = '🎯 Excellent work! Great concentration!';
+            } else if (finalScore >= 4) {
+                message = '👍 Good job! Keep practicing!';
+            } else {
+                message = '💪 Nice try! You\'ll do better next time!';
+            }
+            performance.textContent = message;
+            
+            // Check and update high score
+            updateEmojiHighScore(finalScore);
+        }
+
+        function loadEmojiHighScore() {
+            const highScore = localStorage.getItem('emojiPuzzleHighScore') || '0';
+            document.getElementById('emojiHighScore').textContent = highScore;
+        }
+
+        function updateEmojiHighScore(score) {
+            const currentHighScore = parseInt(localStorage.getItem('emojiPuzzleHighScore') || '0');
+            if (score > currentHighScore) {
+                localStorage.setItem('emojiPuzzleHighScore', score.toString());
+                document.getElementById('emojiHighScore').textContent = score;
+                
+                // Show new high score message
+                const performance = document.getElementById('emojiPerformance');
+                performance.innerHTML = '🎉 NEW HIGH SCORE! 🎉<br>' + performance.textContent;
+            }
+        }
+
+        function resetEmojiGameState() {
+            emojiGameState = {
+                isActive: false,
+                isPaused: false,
+                timeLeft: 60,
+                round: 1,
+                sequence: [],
+                userInput: [],
+                timer: null,
+                showingSequence: false,
+                sequenceIndex: 0
+            };
+            
+            // Reset pause button
+            const pauseBtn = document.getElementById('emojiPauseBtn');
+            pauseBtn.textContent = '⏸️ Pause';
+            pauseBtn.style.background = 'rgba(0, 0, 0, 0.6)';
+            
+            // Enable emoji buttons
+            disableEmojiButtons(false);
+        }
+
+        // Add event listeners for emoji buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const emojiButtons = document.querySelectorAll('.emoji-btn');
+            emojiButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const emoji = this.dataset.emoji;
+                    selectEmoji(emoji);
+                });
+            });
+        });
         
     </script>
     <script src="./script.js"></script>
