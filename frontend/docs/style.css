@@ -815,6 +815,37 @@ body {
     }
 }
 
+/* Tablet breakpoint to fix stats overlap between 769px and 812px */
+@media (max-width: 812px) and (min-width: 769px) {
+    .container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+    
+    .chat-section,
+    .study-section {
+        width: 100%;
+        max-width: none;
+    }
+    
+    .stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin: 1.5rem 0;
+        justify-content: center;
+    }
+    
+    .stat-card {
+        padding: 1.2rem;
+        min-width: 120px;
+    }
+    
+    .stat-value {
+        font-size: 1.8rem;
+    }
+}
+
 @media (max-width: 768px) {
     .header {
         padding: 0.8rem 1rem;
