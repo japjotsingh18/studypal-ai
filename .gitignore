@@ -1,3 +1,23 @@
+# Environment files
 .env
+backend/.env
+
+# Virtual environments
+backend-env/
+venv/
+env/
+__pycache__/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
 backend/studypal_data.db
+
+# Node modules (if any)
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
 
