@@ -28,11 +28,6 @@
 - **🌙 Dark Theme**: Eye-friendly design for extended study sessions
 - **⚡ Fast Performance**: Vanilla JavaScript for optimal speed and reliability
 
----
-
-## 🚀 Live Demo
-
-Visit the live application: [StudyPal AI](https://japjotsingh18.github.io/studypal-ai/frontend/docs/)
 
 ---
 
