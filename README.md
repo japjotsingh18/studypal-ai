@@ -192,22 +192,6 @@ CREATE TABLE study_sessions (
 );
 ```
 
----
-
-## 🚀 Deployment
-
-### Frontend (GitHub Pages)
-The frontend is automatically deployed to GitHub Pages on push to main branch.
-
-### Backend (Local/Server)
-For production deployment:
-1. Set up a production WSGI server (e.g., Gunicorn)
-2. Configure environment variables securely
-3. Set up HTTPS for API endpoints
-4. Update CORS settings for production domain
-
----
-
 ## 🤝 Contributing
 
 We welcome contributions! Here's how you can help:
@@ -223,27 +207,6 @@ We welcome contributions! Here's how you can help:
 - Test all features across different devices
 - Update documentation for new features
 - Ensure responsive design principles
-
----
-
-## 📋 Future Enhancements
-
-- [ ] User authentication and cloud data sync
-- [ ] Pomodoro technique integration
-- [ ] Study goal setting and tracking
-- [ ] Social features and study groups
-- [ ] More mini-games and challenges
-- [ ] Export study data to CSV/PDF
-- [ ] Dark/light theme toggle
-- [ ] Notification system for breaks
-- [ ] Integration with calendar apps
-- [ ] Study music and ambient sounds
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
