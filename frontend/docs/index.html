@@ -9,6 +9,20 @@
     
 </head>
 <body>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
     <div class="header">
         <h1>StudyPal AI</h1>
         <button class="btn history-btn" onclick="toggleHistory()"><i class="fa-solid fa-chart-line"></i> Study History</button>
@@ -613,11 +627,17 @@
         function displaySessionsChart(sessions) {
             const ctx = document.getElementById('sessionChart').getContext('2d');
             
+            // Destroy existing chart if it exists
+            if (window.sessionChartInstance) {
+                window.sessionChartInstance.destroy();
+            }
+            
             // Prepare data for chart (last 10 sessions)
             const labels = sessions.map(session => `Session #${session.id}`);
             const timeData = sessions.map(session => Math.round(session.total_time / 60)); // Convert to minutes
             
-            new Chart(ctx, {
+            // Store the chart instance globally so we can destroy it later
+            window.sessionChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,

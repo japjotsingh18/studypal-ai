@@ -190,37 +190,27 @@ function updateUnlockProgress(currentMinutes) {
 
 // Helper function to update individual game progress
 function updateGameProgress(gameElement, progress, remaining) {
-    console.log(`Updating game ${gameElement.id} with progress ${progress}% and ${remaining} minutes remaining`);
-    
-    // Update the circular progress ring
-    const progressRing = gameElement.querySelector('.progress-ring-progress-mini');
-    if (progressRing) {
-        const circumference = 157; // 2 * π * 25
-        const offset = circumference - (progress / 100) * circumference;
-        progressRing.style.strokeDashoffset = offset;
-        console.log(`Updated circular progress for ${gameElement.id}: offset ${offset}`);
-    } else {
-        console.log(`No progress ring found for ${gameElement.id}`);
+    let progressBar = gameElement.querySelector('.progress-indicator');
+    if (!progressBar) {
+        progressBar = document.createElement('div');
+        progressBar.className = 'progress-indicator';
+        progressBar.innerHTML = `
+            <div class="progress-bar-mini">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="progress-text">${remaining} min remaining</div>
+        `;
+        gameElement.appendChild(progressBar);
     }
     
-    // Update the bottom progress bar
-    const progressBarFill = gameElement.querySelector('.progress-bar-fill');
-    if (progressBarFill) {
-        progressBarFill.style.width = `${Math.min(progress, 100)}%`;
-        console.log(`Updated progress bar for ${gameElement.id}: width ${Math.min(progress, 100)}%`);
-    } else {
-        console.log(`No progress bar fill found for ${gameElement.id}`);
-    }
+    const progressFill = progressBar.querySelector('.progress-fill');
+    const progressText = progressBar.querySelector('.progress-text');
     
-    // Update the unlock text
-    const unlockText = gameElement.querySelector('.unlock-text');
-    if (unlockText && remaining > 0) {
-        const gameId = gameElement.id;
-        const requiredMinutes = gameId === 'game1' ? 20 : 40;
-        unlockText.textContent = `Unlock: ${Math.ceil(remaining)} minutes remaining`;
-        console.log(`Updated unlock text for ${gameElement.id}: ${unlockText.textContent}`);
-    } else if (!unlockText) {
-        console.log(`No unlock text found for ${gameElement.id}`);
+    if (progressFill) {
+        progressFill.style.width = `${Math.min(progress, 100)}%`;
+    }
+    if (progressText) {
+        progressText.textContent = `${remaining} min remaining`;
     }
 }
 
@@ -282,33 +272,11 @@ function showToast(message) {
 
 // Add event listener when DOM is loaded
 window.addEventListener('DOMContentLoaded', () => {
-    initializeGameProgress(); // Initialize the progress indicators
     checkGameUnlocks(); // Check unlock status on page load
     
     // Check unlocks periodically (every 30 seconds)
     setInterval(checkGameUnlocks, 30000);
 });
-
-// Initialize game progress indicators
-function initializeGameProgress() {
-    const games = ['game1', 'game2', 'game3'];
-    games.forEach(gameId => {
-        const gameElement = document.getElementById(gameId);
-        if (gameElement) {
-            // Reset circular progress
-            const progressRing = gameElement.querySelector('.progress-ring-progress-mini');
-            if (progressRing) {
-                progressRing.style.strokeDashoffset = '157'; // Full circle
-            }
-            
-            // Reset bottom progress bar
-            const progressBarFill = gameElement.querySelector('.progress-bar-fill');
-            if (progressBarFill) {
-                progressBarFill.style.width = '0%';
-            }
-        }
-    });
-}
 
         function updateStats() {
             document.getElementById('totalTime').textContent = `${Math.floor(stats.totalTime / 60)}m`;
