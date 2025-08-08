@@ -66,25 +66,28 @@
                     <div>Sessions</div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="games-section" id="gamesSection">
-                <h3><i class="fa-solid fa-gamepad"></i> Game Rewards</h3>
-                <div class="unlock-message" id="unlockMessage" style="display: none;">
-                    🎉 You've earned a break! Choose a mini-game.
+    <!-- Game Rewards Section - Full Width Row -->
+    <div class="games-section-wrapper">
+        <div class="games-section" id="gamesSection">
+            <h3><i class="fa-solid fa-gamepad"></i> Game Rewards</h3>
+            <div class="unlock-message" id="unlockMessage" style="display: none;">
+                🎉 You've earned a break! Choose a mini-game.
+            </div>
+            <div class="games-grid">
+                <div class="game-card" id="game1" onclick="playGame('palindrome')">
+                    <div>✅ Palindrome Challenge</div>
+                    <small>20min unlock</small>
                 </div>
-                <div class="games-grid">
-                    <div class="game-card" id="game1" onclick="playGame('palindrome')">
-                        <div>✅ Palindrome Challenge</div>
-                        <small>20min unlock</small>
-                    </div>
-                    <div class="game-card" id="game2" onclick="playGame('quiz')">
-                        <div>🧠 Brain Flash Quiz</div>
-                        <small>40min unlock</small>
-                    </div>
-                    <div class="game-card" id="game3" onclick="playGame('emoji')">
-                        <div>😊 Emoji Puzzle</div>
-                        <small>40min unlock</small>
-                    </div>
+                <div class="game-card" id="game2" onclick="playGame('quiz')">
+                    <div>🧠 Brain Flash Quiz</div>
+                    <small>40min unlock</small>
+                </div>
+                <div class="game-card" id="game3" onclick="playGame('emoji')">
+                    <div>😊 Emoji Puzzle</div>
+                    <small>40min unlock</small>
                 </div>
             </div>
         </div>

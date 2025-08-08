@@ -19,11 +19,12 @@ body {
 .container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr; /* Equal height, but natural sizing */
+    grid-template-rows: auto; /* Auto height for compact layout */
     min-height: auto;
     gap: 2rem;
     padding: 2rem;
     margin-top: 80px;
+    align-items: center; /* Vertically center the sections */
 }
 
 .header {
@@ -78,6 +79,7 @@ body {
     margin-top: 80px;
     /* Remove this line: height: calc(100vh - 120px); */
     min-height: auto; /* Allow natural height */
+    margin-bottom: 2rem; /* Add space before games section */
 }
 
 .chat-section,
@@ -90,14 +92,15 @@ body {
     flex-direction: column;
     backdrop-filter: blur(10px);
     padding: 2rem;
-    min-height: 0;
-    /* Remove max-height restrictions */
+    height: 600px; /* Fixed height for both sections to match */
+    min-height: 600px;
+    max-height: 600px;
 }
 
 .study-section {
     border-color: #39ff14;
     box-shadow: 0 0 30px rgba(57, 255, 20, 0.2);
-    gap: 2rem; /* Back to original gap */
+    gap: 1.5rem; /* Reduced gap for more compact layout */
 }
 
 .chat-messages {
@@ -108,7 +111,7 @@ body {
     flex-direction: column;
     gap: 1rem;
     min-height: 0;
-    /* Remove max-height restrictions */
+    max-height: none; /* Remove max height to allow full expansion */
 }
 
 .chat-header {
@@ -293,6 +296,13 @@ body {
     margin: 1rem 0;
 }
 
+/* Game Rewards Section - Full Width Row */
+.games-section-wrapper {
+    width: 100%;
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
 /* Less vibrant Games Section */
 .games-section {
     border: 1px solid rgba(0, 245, 255, 0.4);
@@ -301,8 +311,9 @@ body {
     padding: 20px;
     background: linear-gradient(to bottom, rgba(17, 24, 39, 0.8), rgba(31, 41, 55, 0.6));
     color: #00f5ff;
-    margin-bottom: 2rem;
     transition: box-shadow 0.3s;
+    max-width: 1200px;
+    margin: 0 auto; /* Center the games section */
 }
 
 .games-section.unlocked {
@@ -318,9 +329,12 @@ body {
 
 .games-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
     margin-top: 1rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .game-card {
@@ -491,7 +505,7 @@ body {
     border-top: 3px solid #00f5ff;
     box-shadow: 0 -10px 30px rgba(0, 245, 255, 0.2);
     backdrop-filter: blur(20px);
-    margin-top: 3rem; /* Separation from main content */
+    margin-top: 2rem; /* Reduced margin since games section adds separation */
     padding: 3rem 2rem;
 }
 
@@ -689,13 +703,14 @@ body {
     .chat-section,
     .study-section {
         padding: 1rem;
+        height: auto; /* Allow natural height on mobile */
         min-height: auto;
-        max-height: none; /* Remove height restrictions */
+        max-height: none;
     }
     
     .chat-messages {
-        max-height: 300px; /* Fixed height for chat messages */
-        min-height: 200px;
+        max-height: 400px; /* Larger height for mobile chat messages */
+        min-height: 300px;
     }
     
     .timer-display {
@@ -736,17 +751,6 @@ body {
         font-size: 1.2rem;
     }
     
-    .games-grid {
-        grid-template-columns: 1fr;
-        gap: 0.8rem;
-        margin-top: 0.8rem;
-    }
-    
-    .game-card {
-        padding: 0.8rem;
-        font-size: 0.9rem;
-    }
-    
     .motivation-text {
         font-size: 1rem;
         margin: 0.8rem 0;
@@ -756,6 +760,23 @@ body {
         padding: 0.8rem 1.5rem;
         font-size: 1rem;
         min-width: 180px;
+    }
+    
+    /* Games section responsive */
+    .games-section-wrapper {
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .games-grid {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+        margin-top: 0.8rem;
+    }
+    
+    .game-card {
+        padding: 0.8rem;
+        font-size: 0.9rem;
     }
     
     /* Fix history section for mobile */
@@ -860,6 +881,11 @@ body {
     
     .timer-display {
         font-size: 1.5rem;
+    }
+    
+    .games-section-wrapper {
+        padding: 0.5rem;
+        margin-top: 0.8rem;
     }
     
     .history-section {
