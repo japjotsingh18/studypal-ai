@@ -1,3 +1,15 @@
+// API Configuration
+const API_KEY = 'dG4zowIE38zEYlEHT3SuEY-kIwHEcBwD4IKfyq0cuc8'; // Move this to environment variables in production
+const API_BASE_URL = 'http://127.0.0.1:5001';
+
+// Helper function to create authenticated headers
+function getAuthHeaders() {
+    return {
+        'Content-Type': 'application/json',
+        'X-API-Key': API_KEY
+    };
+}
+
 let timer = {
             seconds: 0,
             interval: null,
@@ -50,6 +62,7 @@ let timer = {
 
         function toggleTimer() {
             const startBtn = document.getElementById('startBtn');
+            const studySection = document.querySelector('.study-section');
             
             if (!timer.isRunning) {
                 // Reset unlock tracking flags when starting a new session
@@ -60,6 +73,10 @@ let timer = {
                 startBtn.textContent = 'Pause Session';
                 startBtn.style.background = 'linear-gradient(45deg, #ff4757, #ff6b7a)';
                 document.getElementById('finishBtn').style.display = 'block';
+                
+                // Add session-active class for styling
+                studySection.classList.add('session-active');
+                
                 addAIMessage("Study session started! I'm here if you need any help. Let's make this productive! 💪");
             } else {
                 clearInterval(timer.interval);
@@ -67,6 +84,9 @@ let timer = {
                 startBtn.textContent = 'Resume Session';
                 startBtn.style.background = 'linear-gradient(45deg, #00f5ff, #39ff14)';
                 document.getElementById('finishBtn').style.display = 'none';
+                
+                // Remove session-active class
+                studySection.classList.remove('session-active');
                 
                 // Update stats
                 stats.totalTime += timer.seconds;
@@ -80,7 +100,10 @@ let timer = {
         // Utility function to get total study time from backend
 async function getTotalStudyTime() {
     try {
-        const res = await fetch('http://127.0.0.1:5001/api/get-sessions');
+        const res = await fetch(`${API_BASE_URL}/api/get-sessions`, {
+            method: 'GET',
+            headers: getAuthHeaders()
+        });
         const data = await res.json();
         if (data.sessions) {
             return data.sessions.reduce((sum, s) => sum + s.total_time, 0);
@@ -294,14 +317,20 @@ window.addEventListener('DOMContentLoaded', () => {
                 
                 // Simulate AI response
                 // Send message to backend for AI response
-fetch('http://127.0.0.1:5001/api/chat', {
+fetch(`${API_BASE_URL}/api/chat`, {
     method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify({ message })
 })
-.then(response => response.json())
+.then(response => {
+    if (response.status === 429) {
+        // Rate limit exceeded
+        return response.json().then(data => {
+            throw new Error(`Rate limit exceeded: ${data.error}`);
+        });
+    }
+    return response.json();
+})
 .then(data => {
     if (data.reply) {
         addAIMessageTypingEffect(data.reply);
@@ -311,7 +340,11 @@ fetch('http://127.0.0.1:5001/api/chat', {
 })
 .catch(error => {
     console.error('Error:', error);
-    addAIMessage("Error connecting to StudyPal AI backend. 🛠️");
+    if (error.message.includes('Rate limit exceeded')) {
+        addAIMessage("⏰ Please wait a moment before sending another message. Rate limit reached!");
+    } else {
+        addAIMessage("Error connecting to StudyPal AI backend. 🛠️");
+    }
 });
 
             }
@@ -384,11 +417,9 @@ async function confirmFinishSession() {
                 sessionCount: stats.sessions
             };
             
-            const response = await fetch('http://127.0.0.1:5001/api/save-session', {
+            const response = await fetch(`${API_BASE_URL}/api/save-session`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify(sessionData)
             });
             
@@ -417,10 +448,15 @@ async function confirmFinishSession() {
     
     // Reset UI elements
     const startBtn = document.getElementById('startBtn');
+    const studySection = document.querySelector('.study-section');
+    
     startBtn.textContent = 'Start Study Session';
     startBtn.style.background = 'linear-gradient(45deg, #00f5ff, #39ff14)';
     document.getElementById('finishBtn').style.display = 'none';
     document.getElementById('timerDisplay').textContent = '00:00';
+    
+    // Remove session-active class
+    studySection.classList.remove('session-active');
     
     // Reset timer
     timer.seconds = 0;
@@ -509,9 +545,9 @@ function resetUnlockFlags() {
 async function saveSessionToBackend(totalTime, sessionCount) {
     try {
         const sessionData = { totalTime, sessionCount };
-        const response = await fetch('http://127.0.0.1:5001/api/save-session', {
+        const response = await fetch(`${API_BASE_URL}/api/save-session`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getAuthHeaders(),
             body: JSON.stringify(sessionData)
         });
         if (response.ok) {

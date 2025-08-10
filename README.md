@@ -31,49 +31,94 @@
 
 ---
 
-## �️ Installation & Setup
+## 🛠️ Installation & Setup
 
-### Frontend Setup
+### Option 1: Frontend Only (No Setup Required)
+**Perfect for trying out the app immediately:**
+1. Clone: `git clone https://github.com/japjotsingh18/studypal-ai.git`
+2. Open `frontend/docs/index.html` in your browser
+3. ✅ Study timer and games work perfectly offline
+4. ❌ AI chat requires backend setup (shows offline responses)
+
+### Option 2: Full Setup with AI Chat
+
+#### Prerequisites
+- Python 3.8+ and OpenRouter API key (https://openrouter.ai/)
+
+#### Quick Setup (Recommended)
+```bash
+# 1. Clone and setup
+git clone https://github.com/japjotsingh18/studypal-ai.git
+cd studypal-ai
+
+# 2. Run the setup script
+python setup.py
+
+# 3. Install backend dependencies
+cd backend
+python -m venv ../backend-env
+source ../backend-env/bin/activate  # Windows: ../backend-env/Scripts/activate  
+pip install flask flask-cors openai python-dotenv requests
+
+# 4. Start the application
+python app.py  # Backend runs on http://127.0.0.1:5001
+
+# 5. Open frontend/docs/index.html in your browser
+```
+
+#### Manual Setup Steps
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/japjotsingh18/studypal-ai.git
    cd studypal-ai
    ```
 
-2. **Open the frontend:**
-   ```bash
-   cd frontend/docs
-   ```
-   Open `index.html` in your browser or use Live Server in VS Code.
-
-### Backend Setup (For AI Chat & Data Persistence)
-1. **Navigate to backend directory:**
+2. **Backend setup:**
    ```bash
    cd backend
-   ```
-
-2. **Create virtual environment:**
-   ```bash
    python -m venv ../backend-env
-   source ../backend-env/bin/activate  # On Windows: ../backend-env/Scripts/activate
-   ```
-
-3. **Install dependencies:**
-   ```bash
+   source ../backend-env/bin/activate  # Windows: ../backend-env/Scripts/activate
    pip install flask flask-cors openai python-dotenv requests
    ```
 
-4. **Set up environment variables:**
-   Create a `.env` file in the backend directory:
+3. **Create `backend/.env` with your own API keys:**
    ```env
-   OPENAI_API_KEY=your_openai_api_key_here
+   OPENROUTER_API_KEY=sk-or-v1-your-api-key-here
+   API_SECRET_KEY=your-random-secret-here
    ```
 
-5. **Run the backend server:**
+4. **Update frontend with your API_SECRET_KEY:**
+   - Edit `frontend/docs/script.js` line 2
+   - Edit `frontend/docs/index.html` X-API-Key headers
+
+5. **Run the application:**
    ```bash
-   python app.py
+   # Terminal 1: Backend
+   cd backend && python app.py
+   
+   # Terminal 2: Frontend  
+   cd frontend/docs && open index.html
    ```
-   The backend will run on `http://127.0.0.1:5001`
+
+#### ⚠️ Important for GitHub Users
+- Your API costs are protected - each user needs their own keys
+- `.env` files are gitignored (not included in repository)
+- Each person runs their own backend instance
+
+---
+
+## 🔒 Security Features
+
+- **🔑 API Key Authentication**: Secure backend endpoints with required headers
+- **⏱️ Rate Limiting**: Prevents API abuse and protects costs
+  - Chat endpoint: 1 request per minute
+  - Save session: 1 request per minute  
+  - Get sessions: 1 request per minute
+- **🌐 CORS Protection**: Prevents unauthorized cross-origin requests  
+- **✅ Input Validation**: Robust error handling and data validation
+- **🔐 Environment Variables**: Secure credential management
+
+See [SECURITY.md](SECURITY.md) for detailed security implementation.
 
 ---
 
@@ -87,10 +132,11 @@ studypal-ai/
 │       ├── 🎨 style.css           # Complete styling & responsive design
 │       └── ⚡ script.js           # Frontend game logic & UI interactions
 ├── 📁 backend/
-│   ├── 🐍 app.py                  # Flask API server
+│   ├── 🐍 app.py                  # Flask API server with security
 │   └── 🗃️ studypal_data.db       # SQLite database for session storage
 ├── 📁 backend-env/                # Python virtual environment
-├── ⚙️ .vscode/settings.json       # VS Code configuration
+├── 🔧 setup.py                    # Automated setup script
+├── 🔒 SECURITY.md                 # Security implementation details
 ├── 🚫 .gitignore                  # Git ignore rules
 └── 📖 README.md                   # This file
 ```
@@ -108,10 +154,12 @@ studypal-ai/
 
 ### Backend
 - **Python 3** - Server-side logic
-- **Flask** - Lightweight web framework
+- **Flask** - Lightweight web framework  
 - **SQLite** - Local database for session persistence
-- **OpenAI API** - AI-powered chat assistance
+- **OpenRouter API** - AI-powered chat assistance
 - **Flask-CORS** - Cross-origin resource sharing
+- **Rate Limiting** - API abuse prevention
+- **Authentication** - API key security
 
 ### Development Tools
 - **Git** - Version control

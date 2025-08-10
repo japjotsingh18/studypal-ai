@@ -66,8 +66,10 @@
                     <div class="timer-display" id="timerDisplay">00:00</div>
                 </div>
                 <div class="motivation-text" id="motivationText">Ready to focus? Start your study session!</div>
-                <button class="btn start-btn" id="startBtn" onclick="toggleTimer()">Start Study Session</button>
-                <button class="btn finish-btn" id="finishBtn" onclick="finishSession()" style="display: none;">Finish Session</button>
+                <div class="button-container">
+                    <button class="btn start-btn" id="startBtn" onclick="toggleTimer()">Start Study Session</button>
+                    <button class="btn finish-btn" id="finishBtn" onclick="finishSession()" style="display: none;">Finish Session</button>
+                </div>
             </div>
 
             <div class="stats">
@@ -326,6 +328,7 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            'X-API-Key': 'dG4zowIE38zEYlEHT3SuEY-kIwHEcBwD4IKfyq0cuc8'
                         },
                         body: JSON.stringify({ message: message }),
                         signal: controller.signal
@@ -420,6 +423,7 @@
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-API-Key': 'dG4zowIE38zEYlEHT3SuEY-kIwHEcBwD4IKfyq0cuc8'
                     }
                 });
                 
@@ -570,7 +574,13 @@
             const chartContainer = document.getElementById('chartContainer');
             
             try {
-                const response = await fetch('http://127.0.0.1:5001/api/get-sessions');
+                const response = await fetch('http://127.0.0.1:5001/api/get-sessions', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': 'dG4zowIE38zEYlEHT3SuEY-kIwHEcBwD4IKfyq0cuc8'
+                    }
+                });
                 const data = await response.json();
                 
                 if (!response.ok) {
