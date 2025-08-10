@@ -272,5 +272,5 @@ We welcome contributions! Here's how you can help:
 
 ---
 
-⭐ **If you find StudyPal AI helpful, please give it a star!** ⭐
+
 
