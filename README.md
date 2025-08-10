@@ -5,7 +5,7 @@
 ## 🚀 **Live Demo**
 **Try it now:** [https://japjotsingh18.github.io/studypal-ai/](https://japjotsingh18.github.io/studypal-ai/)
 
-*Note: The live demo includes all features except AI chat (which requires backend setup for API keys). Study timer, games, analytics dashboard, and study history tracking all work perfectly with local storage!*
+*Note: The live demo includes the study timer and all three mini-games that work perfectly offline. AI chat and study history features require backend setup for full functionality.*
 
 ---
 
@@ -50,13 +50,14 @@ See [SECURITY.md](SECURITY.md) for detailed security implementation.
 **✅ What works perfectly without backend:**
 - ✅ **Study timer with visual progress** - Full timer functionality with 20-minute cycles
 - ✅ **All three mini-games** - Palindrome Challenge, Brain Flash Quiz, Emoji Memory Puzzle
-- ✅ **Study history & analytics** - Complete session tracking with charts (localStorage)
-- ✅ **Game unlock progression** - Milestone-based rewards system
-- ✅ **Real-time statistics** - Track total study time and session counts
+- ✅ **Game unlock progression** - Milestone-based rewards system (current session only)
+- ✅ **Current session statistics** - Track time for current session
 - ✅ **Responsive design** - Works on all devices
 
 **❌ Requires backend setup:**
 - ❌ **AI chat assistant** - Shows connection status and offline responses
+- ❌ **Study history & analytics** - Session tracking with charts requires database
+- ❌ **Persistent statistics** - Total study time across sessions needs backend storage
 
 ### Option 2: Full Setup with AI Chat 🤖
 
@@ -271,6 +272,4 @@ We welcome contributions! Here's how you can help:
 - The open-source community for inspiration and tools
 
 ---
-
-
 
