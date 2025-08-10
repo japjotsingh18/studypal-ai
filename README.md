@@ -1,6 +1,15 @@
 # 📚 StudyPal AI
 
-**StudyPal AI** is an advanced productivity web application designed to help students st## 🔒 Security Features
+**StudyPal AI** is an advanced productivity web application designed to help students stay focused, motivated, and engaged during study sessions. It combines powerful study tools with gamification elements and AI-powered assistance to create the ultimate learning companion.
+
+## 🚀 **Live Demo**
+**Try it now:** [https://japjotsingh18.github.io/studypal-ai/frontend/docs/](https://japjotsingh18.github.io/studypal-ai/frontend/docs/)
+
+*Note: The live demo includes all features except AI chat (which requires backend setup for API keys). Study timer, games, analytics dashboard, and study history tracking all work perfectly with local storage!*
+
+---
+
+## 🔒 Security Features
 
 - **🚫 Zero Client-Side API Keys**: No secrets exposed in frontend JavaScript code
 - **🌐 Origin-Based Authentication**: Backend validates requests from trusted localhost origins  
@@ -13,12 +22,7 @@
 - **🔐 Environment Variables**: Secure credential management in gitignored `.env` files
 - **🛡️ GitGuardian Verified**: Repository scanned with 0 secrets detected
 
-See [SECURITY.md](SECURITY.md) for detailed security implementation.cused, motivated, and engaged during study sessions. It combines powerful study tools with gamification elements and AI-powered assistance to create the ultimate learning companion.
-
-## 🚀 **Live Demo**
-**Try it now:** [https://japjotsingh18.github.io/studypal-ai/frontend/docs/](https://japjotsingh18.github.io/studypal-ai/frontend/docs/)
-
-*Note: The live demo includes all features except AI chat (which requires backend setup for API keys). All study tools and games work perfectly!*
+See [SECURITY.md](SECURITY.md) for detailed security implementation.
 
 ---
 
@@ -55,9 +59,17 @@ See [SECURITY.md](SECURITY.md) for detailed security implementation.cused, motiv
 **Perfect for experiencing the full app immediately:**
 1. **Live Demo**: Visit [https://japjotsingh18.github.io/studypal-ai/frontend/docs/](https://japjotsingh18.github.io/studypal-ai/frontend/docs/)
 2. **Or Local**: Clone and open `frontend/docs/index.html` in your browser
-3. ✅ **Study timer, games, and analytics work perfectly**
-4. ✅ **No setup required - works offline**
-5. ❌ AI chat requires backend setup (shows connection status)
+
+**✅ What works perfectly without backend:**
+- ✅ **Study timer with visual progress** - Full timer functionality with 20-minute cycles
+- ✅ **All three mini-games** - Palindrome Challenge, Brain Flash Quiz, Emoji Memory Puzzle
+- ✅ **Study history & analytics** - Complete session tracking with charts (localStorage)
+- ✅ **Game unlock progression** - Milestone-based rewards system
+- ✅ **Real-time statistics** - Track total study time and session counts
+- ✅ **Responsive design** - Works on all devices
+
+**❌ Requires backend setup:**
+- ❌ **AI chat assistant** - Shows connection status and offline responses
 
 ### Option 2: Full Setup with AI Chat 🤖
 
@@ -261,11 +273,11 @@ We welcome contributions! Here's how you can help:
 **Japjot Singh**
 - GitHub: [@japjotsingh18](https://github.com/japjotsingh18)
 - Project: [StudyPal AI](https://github.com/japjotsingh18/studypal-ai)
-
+- The open-source community for inspiration and tools
 ---
-
+---
 ## 🙏 Acknowledgments
-
+⭐ **If you find StudyPal AI helpful, please give it a star!** ⭐
 - OpenAI for providing the AI chat capabilities
 - Chart.js for beautiful data visualizations
 - Font Awesome for the icon library
