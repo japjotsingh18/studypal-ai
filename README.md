@@ -3,7 +3,7 @@
 **StudyPal AI** is an advanced productivity web application designed to help students stay focused, motivated, and engaged during study sessions. It combines powerful study tools with gamification elements and AI-powered assistance to create the ultimate learning companion.
 
 ## 🚀 **Live Demo**
-**Try it now:** [https://japjotsingh18.github.io/studypal-ai/frontend/docs/](https://japjotsingh18.github.io/studypal-ai/frontend/docs/)
+**Try it now:** [https://japjotsingh18.github.io/studypal-ai/](https://japjotsingh18.github.io/studypal-ai/)
 
 *Note: The live demo includes all features except AI chat (which requires backend setup for API keys). Study timer, games, analytics dashboard, and study history tracking all work perfectly with local storage!*
 
@@ -57,7 +57,7 @@ See [SECURITY.md](SECURITY.md) for detailed security implementation.
 
 ### Option 1: Frontend Only (No Setup Required) ⭐ **RECOMMENDED FOR TRYING OUT**
 **Perfect for experiencing the full app immediately:**
-1. **Live Demo**: Visit [https://japjotsingh18.github.io/studypal-ai/frontend/docs/](https://japjotsingh18.github.io/studypal-ai/frontend/docs/)
+1. **Live Demo**: Visit [https://japjotsingh18.github.io/studypal-ai/](https://japjotsingh18.github.io/studypal-ai/)
 2. **Or Local**: Clone and open `frontend/docs/index.html` in your browser
 
 **✅ What works perfectly without backend:**
