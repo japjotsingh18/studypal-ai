@@ -3,9 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>StudyPal AI</title>
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./style.css?v=1.1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Force dark theme on mobile -->
+    <style>
+        @media (max-width: 600px) {
+            body, html {
+                background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%) !important;
+                color: #e0e0e0 !important;
+            }
+            .container, .chat-section, .study-section {
+                background: rgba(13, 13, 35, 0.9) !important;
+                border: 1px solid rgba(0, 255, 255, 0.3) !important;
+            }
+            .progress-ring {
+                width: 140px !important;
+                height: 140px !important;
+            }
+            .timer-display {
+                color: #00ffff !important;
+                font-size: 1.8rem !important;
+                text-shadow: 0 0 20px rgba(0, 255, 255, 0.5) !important;
+            }
+        }
+    </style>
     
 </head>
 <body>
