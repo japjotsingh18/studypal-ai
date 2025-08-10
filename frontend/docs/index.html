@@ -328,13 +328,11 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-API-Key': 'PLACEHOLDER_API_KEY_REPLACE_WITH_SETUP_SCRIPT'
+                            'X-API-Key': 'mzOVxyTkLCEfi1bawjWWtwaMXy5oj-2iVvp6yVnd9w4'
                         },
                         body: JSON.stringify({ message: message }),
                         signal: controller.signal
-                    });
-                    
-                    clearTimeout(timeoutId);
+                    });                    clearTimeout(timeoutId);
                     
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -423,7 +421,7 @@
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-API-Key': 'PLACEHOLDER_API_KEY_REPLACE_WITH_SETUP_SCRIPT'
+                        'X-API-Key': 'mzOVxyTkLCEfi1bawjWWtwaMXy5oj-2iVvp6yVnd9w4'
                     }
                 });
                 
@@ -578,7 +576,7 @@
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-API-Key': 'PLACEHOLDER_API_KEY_REPLACE_WITH_SETUP_SCRIPT'
+                        'X-API-Key': 'mzOVxyTkLCEfi1bawjWWtwaMXy5oj-2iVvp6yVnd9w4'
                     }
                 });
                 const data = await response.json();

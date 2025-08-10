@@ -1,1 +1,1 @@
-{"last_found_secrets": [{"match": "3dcd4180b8734a89fe35d986bf1f58bee06e805ed2a11d666ce78cc79ce18965", "name": "Generic High Entropy Secret - commit://dc672a9294c6cce641cefb07357985de55f646a5/frontend/docs/script.js"}]}
+{"last_found_secrets": [{"name": "Generic High Entropy Secret - commit://dc672a9294c6cce641cefb07357985de55f646a5/frontend/docs/script.js", "match": "3dcd4180b8734a89fe35d986bf1f58bee06e805ed2a11d666ce78cc79ce18965"}]}
