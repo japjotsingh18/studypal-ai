@@ -108,7 +108,7 @@ def require_api_key(f):
     return decorated_function
 
 @app.route("/api/chat", methods=["POST"])
-@rate_limit(max_requests=1, per_seconds=60, endpoint_name="chat")  # 1 chat request per minute
+@rate_limit(max_requests=2, per_seconds=60, endpoint_name="chat")  # 2 chat requests per minute
 @require_api_key
 def chat():
     data = request.get_json()
@@ -144,7 +144,7 @@ def chat():
         return jsonify({"error": str(e)}), 500
 
 @app.route("/api/save-session", methods=["POST"])
-@rate_limit(max_requests=1, per_seconds=60, endpoint_name="save-session")  # 1 save per minute
+@rate_limit(max_requests=2, per_seconds=60, endpoint_name="save-session")  # 2 saves per minute
 @require_api_key
 def save_session():
     data = request.get_json()
@@ -182,7 +182,7 @@ def save_session():
 
 # Fetch last 10 study sessions
 @app.route("/api/get-sessions", methods=["GET"])
-@rate_limit(max_requests=1, per_seconds=60, endpoint_name="get-sessions")  # 1 read per minute
+@rate_limit(max_requests=2, per_seconds=60, endpoint_name="get-sessions")  # 2 reads per minute
 def get_sessions():
     db_path = os.path.join(os.path.dirname(__file__), "studypal_data.db")
     try:
@@ -221,17 +221,17 @@ def rate_limit_status():
         status[endpoint] = {
             "requests_made": len(rate_limit_storage[client_id]),
             "requests_remaining": {
-                "chat": 1 - len(rate_limit_storage[f"{client_ip}:{api_key}:chat"]),
-                "save-session": 1 - len(rate_limit_storage[f"{client_ip}:{api_key}:save-session"]),
-                "get-sessions": 1 - len(rate_limit_storage[f"{client_ip}:{api_key}:get-sessions"])
+                "chat": 2 - len(rate_limit_storage[f"{client_ip}:{api_key}:chat"]),
+                "save-session": 2 - len(rate_limit_storage[f"{client_ip}:{api_key}:save-session"]),
+                "get-sessions": 2 - len(rate_limit_storage[f"{client_ip}:{api_key}:get-sessions"])
             }[endpoint]
         }
     
     return jsonify({
         "rate_limits": {
-            "chat": "1 request per minute",
-            "save-session": "1 request per minute", 
-            "get-sessions": "1 request per minute"
+            "chat": "2 requests per minute",
+            "save-session": "2 requests per minute", 
+            "get-sessions": "2 requests per minute"
         },
         "current_status": status,
         "client_ip": client_ip

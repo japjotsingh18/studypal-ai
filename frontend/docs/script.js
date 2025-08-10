@@ -77,7 +77,7 @@ let timer = {
                 // Add session-active class for styling
                 studySection.classList.add('session-active');
                 
-                addAIMessage("Study session started! I'm here if you need any help. Let's make this productive! 💪");
+                addAIMessage("Study session started! 🎯 Reach 20 minutes to unlock your first game - Palindrome Challenge! I'm here if you need any help. Let's make this productive! 💪");
             } else {
                 clearInterval(timer.interval);
                 timer.isRunning = false;
@@ -93,7 +93,21 @@ let timer = {
                 stats.sessions++;
                 updateStats();
                 
-                addAIMessage(`Session paused! You studied for ${Math.floor(timer.seconds / 60)} minutes. Great work! 🎉`);
+                // Generate motivational message based on study time
+                const studyMinutes = Math.floor(timer.seconds / 60);
+                let message;
+                
+                if (studyMinutes === 0) {
+                    message = `Session paused after ${timer.seconds} seconds. 💪 Try to reach 20 minutes to unlock your first game!`;
+                } else if (studyMinutes < 20) {
+                    message = `Session paused! You studied for ${studyMinutes} minutes. 🎯 ${20 - studyMinutes} more minutes to unlock Palindrome Challenge!`;
+                } else if (studyMinutes < 40) {
+                    message = `Session paused! You studied for ${studyMinutes} minutes. Great work! 🎉 ${40 - studyMinutes} more minutes to unlock Brain Flash Quiz!`;
+                } else {
+                    message = `Session paused! You studied for ${studyMinutes} minutes. Excellent work! 🎉 All games unlocked!`;
+                }
+                
+                addAIMessage(message);
             }
         }
 
@@ -477,11 +491,26 @@ async function confirmFinishSession() {
         unlockMessage.style.display = 'none';
     }
     
-    // Show toast notification
-    showToast('Session finished and saved! All progress reset.');
+    // Generate motivational completion message based on study time
+    const studyMinutes = Math.floor(timer.seconds / 60);
+    let completionMessage;
+    
+    if (studyMinutes === 0) {
+        completionMessage = "Session ended. 🎯 Next time, try to reach 20 minutes to unlock your first game!";
+        showToast('Session ended. Try for 20 minutes next time to unlock games!');
+    } else if (studyMinutes < 20) {
+        completionMessage = `🎉 Session completed! You studied for ${studyMinutes} minutes. 🎯 Just ${20 - studyMinutes} more minutes next time to unlock Palindrome Challenge!`;
+        showToast(`Session saved! ${studyMinutes} minutes recorded. ${20 - studyMinutes} more to unlock games!`);
+    } else if (studyMinutes < 40) {
+        completionMessage = `🎉 Session completed and saved! You studied for ${studyMinutes} minutes and unlocked Palindrome Challenge! 🎯 ${40 - studyMinutes} more minutes to unlock all games!`;
+        showToast(`Great work! ${studyMinutes} minutes recorded and Palindrome Challenge unlocked!`);
+    } else {
+        completionMessage = `🎉 Session completed and saved! Amazing work - ${studyMinutes} minutes of focused study! All games unlocked! 🏆`;
+        showToast(`Excellent! ${studyMinutes} minutes recorded and all games unlocked!`);
+    }
     
     // Add AI message
-    addAIMessage("🎉 Session completed and saved! Your study time has been recorded. Start a new session whenever you're ready!");
+    addAIMessage(completionMessage);
     
     // Refresh history if it's currently visible
     if (typeof refreshHistoryIfVisible === 'function') {

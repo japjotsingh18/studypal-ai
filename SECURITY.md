@@ -57,9 +57,9 @@ API_SECRET_KEY=any_random_string_here
 - Key stored securely in backend `.env` file
 
 ✅ **Rate Limiting**
-- **Chat endpoint**: 1 request per minute (prevents AI API abuse)
-- **Save session**: 1 request per minute (prevents database spam)
-- **Get sessions**: 1 request per minute (allows limited reads)
+- **Chat endpoint**: 2 requests per minute (prevents AI API abuse)
+- **Save session**: 2 requests per minute (prevents database spam)
+- **Get sessions**: 2 requests per minute (allows limited reads)
 - Returns HTTP 429 when limits exceeded
 - Per-client tracking (IP + API key combination)
 
@@ -89,8 +89,8 @@ curl -X POST http://127.0.0.1:5001/api/chat \
   -H "X-API-Key: YOUR_API_KEY" \
   -d '{"message": "test"}'
 
-# Test rate limiting (2nd request should fail)
-for i in {1..2}; do 
+# Test rate limiting (3rd request should fail)
+for i in {1..3}; do 
   curl -X POST http://127.0.0.1:5001/api/chat \
     -H "Content-Type: application/json" \
     -H "X-API-Key: YOUR_API_KEY" \

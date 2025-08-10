@@ -111,9 +111,9 @@ python app.py  # Backend runs on http://127.0.0.1:5001
 
 - **🔑 API Key Authentication**: Secure backend endpoints with required headers
 - **⏱️ Rate Limiting**: Prevents API abuse and protects costs
-  - Chat endpoint: 1 request per minute
-  - Save session: 1 request per minute  
-  - Get sessions: 1 request per minute
+  - Chat endpoint: 2 requests per minute
+  - Save session: 2 requests per minute  
+  - Get sessions: 2 requests per minute
 - **🌐 CORS Protection**: Prevents unauthorized cross-origin requests  
 - **✅ Input Validation**: Robust error handling and data validation
 - **🔐 Environment Variables**: Secure credential management
