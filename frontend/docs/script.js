@@ -1,5 +1,5 @@
 // API Configuration
-const API_KEY = 'dG4zowIE38zEYlEHT3SuEY-kIwHEcBwD4IKfyq0cuc8'; // Move this to environment variables in production
+const API_KEY = 'PLACEHOLDER_API_KEY_REPLACE_WITH_SETUP_SCRIPT'; // Will be replaced by setup.py
 const API_BASE_URL = 'http://127.0.0.1:5001';
 
 // Helper function to create authenticated headers

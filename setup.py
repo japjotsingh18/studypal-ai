@@ -70,11 +70,11 @@ def update_frontend_files(api_secret):
         content = html_file.read_text()
         # Replace X-API-Key values
         content = content.replace(
-            "'X-API-Key': 'dG4zowIE38zEYlEHT3SuEY-kIwHEcBwD4IKfyq0cuc8'",
+            "'X-API-Key': 'PLACEHOLDER_API_KEY_REPLACE_WITH_SETUP_SCRIPT'",
             f"'X-API-Key': '{api_secret}'"
         )
         content = content.replace(
-            '"X-API-Key": "dG4zowIE38zEYlEHT3SuEY-kIwHEcBwD4IKfyq0cuc8"',
+            '"X-API-Key": "PLACEHOLDER_API_KEY_REPLACE_WITH_SETUP_SCRIPT"',
             f'"X-API-Key": "{api_secret}"'
         )
         
