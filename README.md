@@ -1,6 +1,24 @@
 # 📚 StudyPal AI
 
-**StudyPal AI** is an advanced productivity web application designed to help students stay focused, motivated, and engaged during study sessions. It combines powerful study tools with gamification elements and AI-powered assistance to create the ultimate learning companion.
+**StudyPal AI** is an advanced productivity web application designed to help students st## 🔒 Security Features
+
+- **🚫 Zero Client-Side API Keys**: No secrets exposed in frontend JavaScript code
+- **🌐 Origin-Based Authentication**: Backend validates requests from trusted localhost origins  
+- **⏱️ Rate Limiting**: Prevents API abuse and protects costs
+  - Chat endpoint: 2 requests per minute
+  - Save session: 2 requests per minute  
+  - Get sessions: 2 requests per minute
+- **🔒 CORS Protection**: Prevents unauthorized cross-origin requests  
+- **✅ Input Validation**: Robust error handling and data validation
+- **🔐 Environment Variables**: Secure credential management in gitignored `.env` files
+- **🛡️ GitGuardian Verified**: Repository scanned with 0 secrets detected
+
+See [SECURITY.md](SECURITY.md) for detailed security implementation.cused, motivated, and engaged during study sessions. It combines powerful study tools with gamification elements and AI-powered assistance to create the ultimate learning companion.
+
+## 🚀 **Live Demo**
+**Try it now:** [https://japjotsingh18.github.io/studypal-ai/frontend/docs/](https://japjotsingh18.github.io/studypal-ai/frontend/docs/)
+
+*Note: The live demo includes all features except AI chat (which requires backend setup for API keys). All study tools and games work perfectly!*
 
 ---
 
@@ -33,26 +51,28 @@
 
 ## 🛠️ Installation & Setup
 
-### Option 1: Frontend Only (No Setup Required)
-**Perfect for trying out the app immediately:**
-1. Clone: `git clone https://github.com/japjotsingh18/studypal-ai.git`
-2. Open `frontend/docs/index.html` in your browser
-3. ✅ Study timer and games work perfectly offline
-4. ❌ AI chat requires backend setup (shows offline responses)
+### Option 1: Frontend Only (No Setup Required) ⭐ **RECOMMENDED FOR TRYING OUT**
+**Perfect for experiencing the full app immediately:**
+1. **Live Demo**: Visit [https://japjotsingh18.github.io/studypal-ai/frontend/docs/](https://japjotsingh18.github.io/studypal-ai/frontend/docs/)
+2. **Or Local**: Clone and open `frontend/docs/index.html` in your browser
+3. ✅ **Study timer, games, and analytics work perfectly**
+4. ✅ **No setup required - works offline**
+5. ❌ AI chat requires backend setup (shows connection status)
 
-### Option 2: Full Setup with AI Chat
+### Option 2: Full Setup with AI Chat 🤖
 
 #### Prerequisites
 - Python 3.8+ and OpenRouter API key (https://openrouter.ai/)
 
-#### Quick Setup (Recommended)
+#### Automated Setup (Recommended)
 ```bash
-# 1. Clone and setup
+# 1. Clone the repository
 git clone https://github.com/japjotsingh18/studypal-ai.git
 cd studypal-ai
 
-# 2. Run the setup script
+# 2. Run the secure setup script
 python setup.py
+# Follow prompts to enter your OpenRouter API key
 
 # 3. Install backend dependencies
 cd backend
@@ -60,7 +80,7 @@ python -m venv ../backend-env
 source ../backend-env/bin/activate  # Windows: ../backend-env/Scripts/activate  
 pip install flask flask-cors openai python-dotenv requests
 
-# 4. Start the application
+# 4. Start the secure backend
 python app.py  # Backend runs on http://127.0.0.1:5001
 
 # 5. Open frontend/docs/index.html in your browser
@@ -81,17 +101,13 @@ python app.py  # Backend runs on http://127.0.0.1:5001
    pip install flask flask-cors openai python-dotenv requests
    ```
 
-3. **Create `backend/.env` with your own API keys:**
+3. **Create `backend/.env` with your API keys:**
    ```env
    OPENROUTER_API_KEY=sk-or-v1-your-api-key-here
    API_SECRET_KEY=your-random-secret-here
    ```
 
-4. **Update frontend with your API_SECRET_KEY:**
-   - Edit `frontend/docs/script.js` line 2
-   - Edit `frontend/docs/index.html` X-API-Key headers
-
-5. **Run the application:**
+4. **Run the application:**
    ```bash
    # Terminal 1: Backend
    cd backend && python app.py
@@ -100,25 +116,12 @@ python app.py  # Backend runs on http://127.0.0.1:5001
    cd frontend/docs && open index.html
    ```
 
-#### ⚠️ Important for GitHub Users
-- Your API costs are protected - each user needs their own keys
-- `.env` files are gitignored (not included in repository)
-- Each person runs their own backend instance
 
----
-
-## 🔒 Security Features
-
-- **🔑 API Key Authentication**: Secure backend endpoints with required headers
-- **⏱️ Rate Limiting**: Prevents API abuse and protects costs
-  - Chat endpoint: 2 requests per minute
-  - Save session: 2 requests per minute  
-  - Get sessions: 2 requests per minute
-- **🌐 CORS Protection**: Prevents unauthorized cross-origin requests  
-- **✅ Input Validation**: Robust error handling and data validation
-- **🔐 Environment Variables**: Secure credential management
-
-See [SECURITY.md](SECURITY.md) for detailed security implementation.
+#### 🔒 **Security Features**
+- **No API keys in frontend code** - All keys secured in backend environment
+- **Origin-based authentication** - Backend validates local requests automatically
+- **Rate limiting** - 2 requests per minute protection
+- **GitGuardian verified** - Zero secrets exposed in repository
 
 ---
 
