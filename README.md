@@ -9,19 +9,6 @@
 
 ---
 
-## 🔒 Security Features
-
-- **🚫 Zero Client-Side API Keys**: No secrets exposed in frontend JavaScript code
-- **🌐 Origin-Based Authentication**: Backend validates requests from trusted localhost origins  
-- **⏱️ Rate Limiting**: Prevents API abuse and protects costs
-  - Chat endpoint: 2 requests per minute
-  - Save session: 2 requests per minute  
-  - Get sessions: 2 requests per minute
-- **🔒 CORS Protection**: Prevents unauthorized cross-origin requests  
-- **✅ Input Validation**: Robust error handling and data validation
-- **🔐 Environment Variables**: Secure credential management in gitignored `.env` files
-- **🛡️ GitGuardian Verified**: Repository scanned with 0 secrets detected
-
 See [SECURITY.md](SECURITY.md) for detailed security implementation.
 
 ---
