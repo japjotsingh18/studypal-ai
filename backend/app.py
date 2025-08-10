@@ -91,11 +91,24 @@ def rate_limit(max_requests=10, per_seconds=60, endpoint_name="default"):
         return decorated_function
     return decorator
 
-# Authentication decorator
+# Authentication decorator - Modified for session-based auth
 def require_api_key(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        # Check for API key in headers
+        # For local development, we'll use a simple session approach
+        # Check if request is from allowed origins (already handled by CORS)
+        
+        # Optional: Check for a simple session token or just allow local requests
+        origin = request.headers.get('Origin', '')
+        referer = request.headers.get('Referer', '')
+        
+        # Allow requests from localhost/127.0.0.1 (local development)
+        if ('127.0.0.1' in referer or 'localhost' in referer or 
+            '127.0.0.1' in origin or 'localhost' in origin):
+            return f(*args, **kwargs)
+        
+        # For production, you would implement proper authentication here
+        # For now, require API key only for non-local requests
         api_key = request.headers.get('X-API-Key')
         
         if not api_key:

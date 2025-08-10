@@ -327,8 +327,7 @@
                     const response = await fetch('http://127.0.0.1:5001/api/chat', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
-                            'X-API-Key': 'mzOVxyTkLCEfi1bawjWWtwaMXy5oj-2iVvp6yVnd9w4'
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({ message: message }),
                         signal: controller.signal
@@ -420,8 +419,7 @@
                 const response = await fetch('http://127.0.0.1:5001/api/get-sessions', {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-API-Key': 'mzOVxyTkLCEfi1bawjWWtwaMXy5oj-2iVvp6yVnd9w4'
+                        'Content-Type': 'application/json'
                     }
                 });
                 
@@ -575,8 +573,7 @@
                 const response = await fetch('http://127.0.0.1:5001/api/get-sessions', {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-API-Key': 'mzOVxyTkLCEfi1bawjWWtwaMXy5oj-2iVvp6yVnd9w4'
+                        'Content-Type': 'application/json'
                     }
                 });
                 const data = await response.json();
