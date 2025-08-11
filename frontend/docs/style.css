@@ -8,12 +8,23 @@
 
 body {
     font-family: 'Roboto Mono', monospace;
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%) !important;
     color: #e0e0e0;
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
     /* Remove height: 100vh to allow page to extend */
+}
+
+/* Ensure background applies at all screen sizes */
+html {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%) !important;
+}
+
+/* Force dark background on all screen sizes including MacBook 13" */
+html, body {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%) !important;
+    background-attachment: fixed !important;
 }
 
 /* Animated Background Particles */

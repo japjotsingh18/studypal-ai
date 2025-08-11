@@ -190,6 +190,29 @@ studypal-ai/
 - **Gameplay**: Watch the sequence, then repeat it correctly
 - **Unlock**: 40 minutes of study time
 
+### 🧪 Testing Games (Developer Console)
+For developers and testers who want to quickly test the games without waiting for unlock timers, you can use these temporary functions in your browser console:
+
+```javascript
+// Open Palindrome Challenge
+playGame('palindrome')
+
+// Open Brain Flash Quiz  
+playGame('quiz')
+
+// Open Emoji Memory Puzzle
+playGame('emoji')
+```
+
+**How to use:**
+1. Open the StudyPal AI application in your browser
+2. Press `F12` (or `Cmd+Option+I` on Mac) to open Developer Tools
+3. Go to the **Console** tab
+4. Type any of the commands above and press Enter
+5. The game will open immediately, bypassing unlock requirements
+
+*Note: These are temporary testing functions available in the JavaScript console for development and testing purposes only.*
+
 ---
 
 ## � Features in Detail

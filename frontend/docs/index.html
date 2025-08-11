@@ -12,9 +12,22 @@
     
     <!-- GitHub Pages specific styling only -->
     <style>
+        /* Universal background fix for all screen sizes including MacBook 13" */
+        html, body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%) !important;
+            background-attachment: fixed !important;
+            color: #e0e0e0 !important;
+        }
+        
         /* Only apply GitHub Pages fixes when explicitly detected */
         body.github-pages-mobile {
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%) !important;
+        }
+        
+        /* Ensure dark background on all GitHub Pages screen sizes */
+        body.github-pages {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%) !important;
+            background-attachment: fixed !important;
         }
         
         @media (max-width: 768px) {
@@ -33,21 +46,40 @@
                 box-shadow: 0 0 30px rgba(57, 255, 20, 0.2) !important;
             }
         }
+        
+        /* MacBook 13" and similar desktop screen fixes */
+        @media (min-width: 1200px) and (max-width: 1500px) {
+            body.github-pages html,
+            body.github-pages body {
+                background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%) !important;
+                background-attachment: fixed !important;
+            }
+        }
     </style>
     
     <!-- GitHub Pages detection script -->
     <script>
-        // Only apply GitHub Pages styling when actually on GitHub Pages
+        // Apply GitHub Pages styling when actually on GitHub Pages
         (function() {
             const isGitHubPages = window.location.hostname.includes('github.io');
             const isMobile = window.innerWidth <= 768;
             
-            if (isGitHubPages && isMobile) {
-                document.body.classList.add('github-pages-mobile');
+            if (isGitHubPages) {
+                // Always add github-pages class for all screen sizes
+                document.body.classList.add('github-pages');
                 
-                // Additional JavaScript fixes for GitHub Pages mobile only
-                const applyGitHubPagesFixes = () => {
-                    const containers = document.querySelectorAll('.container, .chat-section, .study-section');
+                // Force dark background immediately
+                document.documentElement.style.background = 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)';
+                document.body.style.background = 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)';
+                document.documentElement.style.backgroundAttachment = 'fixed';
+                document.body.style.backgroundAttachment = 'fixed';
+                
+                if (isMobile) {
+                    document.body.classList.add('github-pages-mobile');
+                    
+                    // Additional JavaScript fixes for GitHub Pages mobile only
+                    const applyGitHubPagesFixes = () => {
+                        const containers = document.querySelectorAll('.container, .chat-section, .study-section');
                     containers.forEach(el => {
                         el.style.background = 'rgba(15, 15, 35, 0.8)';
                         el.style.border = '1px solid #00f5ff';
@@ -62,10 +94,19 @@
                     });
                 };
                 
-                document.addEventListener('DOMContentLoaded', applyGitHubPagesFixes);
-                window.addEventListener('load', applyGitHubPagesFixes);
+                    document.addEventListener('DOMContentLoaded', applyGitHubPagesFixes);
+                    window.addEventListener('load', applyGitHubPagesFixes);
+                }
             }
         })();
+        
+        // Immediate failsafe for background - runs right away
+        document.documentElement.style.background = 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)';
+        document.body.style.background = 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)';
+        document.documentElement.style.backgroundAttachment = 'fixed';
+        document.body.style.backgroundAttachment = 'fixed';
+        document.documentElement.style.color = '#e0e0e0';
+        document.body.style.color = '#e0e0e0';
     </script>
     
 </head>
@@ -1464,7 +1505,58 @@
             });
         });
         
+        // playGame function for game cards
+        function playGame(gameType) {
+            switch(gameType) {
+                case 'palindrome':
+                    openPalindromeGame();
+                    break;
+                case 'quiz':
+                    openBrainFlashQuiz();
+                    break;
+                case 'emoji':
+                    openEmojiPuzzle();
+                    break;
+                default:
+                    console.log('Unknown game type:', gameType);
+            }
+        }
+        
     </script>
     <script src="./script.js"></script>
+    
+    <!-- Final failsafe for background on all devices including MacBook 13" -->
+    <script>
+        (function() {
+            // Ensure dark background is always applied
+            function ensureDarkBackground() {
+                const html = document.documentElement;
+                const body = document.body;
+                
+                // Apply comprehensive dark background
+                const darkStyle = `
+                    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%) !important;
+                    background-attachment: fixed !important;
+                    min-height: 100vh !important;
+                `;
+                
+                html.style.cssText += darkStyle;
+                body.style.cssText += darkStyle;
+                
+                console.log('✅ Dark background applied for:', window.innerWidth + 'x' + window.innerHeight);
+            }
+            
+            // Apply immediately
+            ensureDarkBackground();
+            
+            // Apply on window resize
+            window.addEventListener('resize', ensureDarkBackground);
+            
+            // Apply on DOM ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', ensureDarkBackground);
+            }
+        })();
+    </script>
 </body>
 </html>
