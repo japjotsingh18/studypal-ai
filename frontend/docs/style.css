@@ -1407,6 +1407,8 @@ html, body {
     align-items: center;
     justify-content: center;
     animation: fadeIn 0.3s ease-out;
+    padding: 1rem;
+    box-sizing: border-box;
 }
 
 @keyframes fadeIn {
@@ -1421,8 +1423,11 @@ html, body {
     padding: 2rem;
     max-width: 500px;
     width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
     box-shadow: 0 0 30px rgba(57, 255, 20, 0.3);
     animation: slideIn 0.4s ease-out;
+    position: relative;
 }
 
 @keyframes slideIn {
@@ -1639,6 +1644,8 @@ html, body {
         margin: 1rem;
         max-width: none;
         width: calc(100% - 2rem);
+        max-height: 95vh;
+        overflow-y: auto;
     }
     
     .palindrome-title {
@@ -1793,7 +1800,9 @@ html, body {
 
 .palindrome-end-screen {
     text-align: center;
-    padding: 2rem;
+    padding: 1.5rem;
+    max-height: 70vh;
+    overflow-y: auto;
 }
 
 .palindrome-end-screen h2 {
@@ -1890,6 +1899,15 @@ html, body {
     .palindrome-end-controls {
         flex-direction: column;
         gap: 0.8rem;
+    }
+    
+    .palindrome-end-screen {
+        padding: 1rem;
+        max-height: 75vh;
+    }
+    
+    .palindrome-final-score {
+        font-size: 2rem;
     }
     
     .palindrome-control-btn {

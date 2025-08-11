@@ -195,13 +195,13 @@ For developers and testers who want to quickly test the games without waiting fo
 
 ```javascript
 // Open Palindrome Challenge
-playGame('palindrome')
+testPalindromeGame()
 
 // Open Brain Flash Quiz  
-playGame('quiz')
+testBrainFlashQuiz()
 
 // Open Emoji Memory Puzzle
-playGame('emoji')
+testEmojiPuzzle()
 ```
 
 **How to use:**
