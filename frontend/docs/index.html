@@ -325,35 +325,77 @@
         <div class="palindrome-game-container">
             <div class="palindrome-game-header">
                 <h2 class="palindrome-title">🎮 Palindrome Challenge</h2>
-                <p class="palindrome-subtitle">Enter a word or sentence to check if it's a palindrome!</p>
+                <div class="palindrome-game-stats">
+                    <div class="palindrome-stat">
+                        <span class="palindrome-stat-label">Score:</span>
+                        <span id="palindromeScore" class="palindrome-score-value">0</span>
+                    </div>
+                    <div class="palindrome-stat">
+                        <span class="palindrome-stat-label">Time:</span>
+                        <span id="palindromeTimer" class="palindrome-timer">30</span>
+                    </div>
+                    <div class="palindrome-stat">
+                        <span class="palindrome-stat-label">High Score:</span>
+                        <span id="palindromeHighScore" class="palindrome-high-score">0</span>
+                    </div>
+                </div>
+                <p class="palindrome-subtitle">Find as many palindromes as possible in 30 seconds!</p>
             </div>
             
-            <div class="palindrome-input-section">
-                <input 
-                    type="text" 
-                    id="palindromeInput" 
-                    class="palindrome-input" 
-                    placeholder="Type your text here..."
-                    maxlength="100"
-                />
+            <div id="palindromeGameContent" class="palindrome-game-content">
+                <div class="palindrome-input-section">
+                    <input 
+                        type="text" 
+                        id="palindromeInput" 
+                        class="palindrome-input" 
+                        placeholder="Type your palindrome here..."
+                        maxlength="100"
+                    />
+                </div>
+                
+                <div class="palindrome-button-section">
+                    <button id="checkPalindromeBtn" class="palindrome-check-btn" onclick="checkPalindrome()">
+                        Check Palindrome (+10 / -5)
+                    </button>
+                </div>
+                
+                <div id="palindromeResult" class="palindrome-result" style="opacity: 0;">
+                    <p id="palindromeResultText"></p>
+                </div>
+                
+                <div class="palindrome-found-list">
+                    <h4>Found Palindromes:</h4>
+                    <div id="palindromeFoundContainer" class="palindrome-found-container"></div>
+                </div>
             </div>
-            
-            <div class="palindrome-button-section">
-                <button id="checkPalindromeBtn" class="palindrome-check-btn" onclick="checkPalindrome()">
-                    Check Palindrome
-                </button>
-            </div>
-            
-            <div id="palindromeResult" class="palindrome-result" style="opacity: 0;">
-                <p id="palindromeResultText"></p>
+
+            <div id="palindromeEndScreen" class="palindrome-end-screen" style="display: none;">
+                <h2>🏁 Game Over!</h2>
+                <div class="palindrome-final-stats">
+                    <div class="palindrome-final-score">
+                        <span class="palindrome-score-label">Final Score:</span>
+                        <span id="palindromeFinalScore" class="palindrome-score-value">0</span>
+                    </div>
+                    <div class="palindrome-stats-breakdown">
+                        <div>✅ Correct: <span id="palindromeCorrectCount">0</span></div>
+                        <div>❌ Wrong: <span id="palindromeWrongCount">0</span></div>
+                        <div>📝 Total Attempts: <span id="palindromeTotalAttempts">0</span></div>
+                    </div>
+                    <div id="palindromePerformance" class="palindrome-performance-message"></div>
+                </div>
+                <div class="palindrome-end-controls">
+                    <button onclick="startPalindromeChallenge()" class="palindrome-control-btn primary">🔄 Play Again</button>
+                    <button onclick="closePalindromeGame()" class="palindrome-control-btn">❌ Close</button>
+                </div>
             </div>
             
             <div class="palindrome-controls">
-                <button class="palindrome-control-btn clear-btn" onclick="clearPalindromeGame()">
+                <button id="palindromePauseBtn" onclick="pausePalindromeGame()" class="palindrome-control-btn">⏸️ Pause</button>
+                <button class="palindrome-control-btn clear-btn" onclick="clearPalindromeInput()">
                     Clear
                 </button>
                 <button class="palindrome-control-btn close-btn" onclick="closePalindromeGame()">
-                    Close Game
+                    Exit Game
                 </button>
             </div>
         </div>
@@ -809,29 +851,142 @@
             }
         }
         
-        // Palindrome Game Functions
+        // Palindrome Game Functions with Timer & Scoring
+        let palindromeState = {
+            isActive: false,
+            isPaused: false,
+            timeLeft: 30,
+            score: 0,
+            correctCount: 0,
+            wrongCount: 0,
+            totalAttempts: 0,
+            timer: null,
+            foundPalindromes: []
+        };
+
         function openPalindromeGame() {
             const gameOverlay = document.getElementById('palindromeGame');
             gameOverlay.style.display = 'flex';
             
-            // Focus on input after a short delay
-            setTimeout(() => {
-                document.getElementById('palindromeInput').focus();
-            }, 300);
+            // Load high score
+            loadPalindromeHighScore();
             
-            // Clear any previous results
-            clearPalindromeResult();
+            // Start the challenge
+            startPalindromeChallenge();
         }
         
         function closePalindromeGame() {
             const gameOverlay = document.getElementById('palindromeGame');
             gameOverlay.style.display = 'none';
             
-            // Clear input and results
-            clearPalindromeGame();
+            // Stop game if running
+            if (palindromeState.isActive) {
+                stopPalindromeTimer();
+                palindromeState.isActive = false;
+            }
+            
+            // Reset game state
+            resetPalindromeState();
         }
-        
-        function clearPalindromeGame() {
+
+        function startPalindromeChallenge() {
+            // Reset game state
+            palindromeState = {
+                isActive: true,
+                isPaused: false,
+                timeLeft: 30,
+                score: 0,
+                correctCount: 0,
+                wrongCount: 0,
+                totalAttempts: 0,
+                timer: null,
+                foundPalindromes: []
+            };
+            
+            // Show game content, hide end screen
+            document.getElementById('palindromeGameContent').style.display = 'block';
+            document.getElementById('palindromeEndScreen').style.display = 'none';
+            
+            // Clear input and results
+            document.getElementById('palindromeInput').value = '';
+            clearPalindromeResult();
+            document.getElementById('palindromeFoundContainer').innerHTML = '';
+            
+            // Update display
+            updatePalindromeDisplay();
+            
+            // Focus on input
+            setTimeout(() => {
+                document.getElementById('palindromeInput').focus();
+            }, 300);
+            
+            // Start timer
+            startPalindromeTimer();
+        }
+
+        function pausePalindromeGame() {
+            if (!palindromeState.isActive) return;
+            
+            const pauseBtn = document.getElementById('palindromePauseBtn');
+            
+            if (palindromeState.isPaused) {
+                // Resume
+                palindromeState.isPaused = false;
+                startPalindromeTimer();
+                pauseBtn.textContent = '⏸️ Pause';
+                pauseBtn.style.background = 'rgba(0, 0, 0, 0.6)';
+                document.getElementById('palindromeInput').disabled = false;
+                document.getElementById('checkPalindromeBtn').disabled = false;
+            } else {
+                // Pause
+                palindromeState.isPaused = true;
+                stopPalindromeTimer();
+                pauseBtn.textContent = '▶️ Resume';
+                pauseBtn.style.background = 'rgba(57, 255, 20, 0.2)';
+                document.getElementById('palindromeInput').disabled = true;
+                document.getElementById('checkPalindromeBtn').disabled = true;
+            }
+        }
+
+        function startPalindromeTimer() {
+            palindromeState.timer = setInterval(() => {
+                if (!palindromeState.isPaused && palindromeState.isActive) {
+                    palindromeState.timeLeft--;
+                    updatePalindromeTimerDisplay();
+                    
+                    if (palindromeState.timeLeft <= 0) {
+                        endPalindromeChallenge();
+                    }
+                }
+            }, 1000);
+        }
+
+        function stopPalindromeTimer() {
+            if (palindromeState.timer) {
+                clearInterval(palindromeState.timer);
+                palindromeState.timer = null;
+            }
+        }
+
+        function updatePalindromeTimerDisplay() {
+            const timerElement = document.getElementById('palindromeTimer');
+            timerElement.textContent = palindromeState.timeLeft;
+            
+            // Add warning classes
+            timerElement.className = 'palindrome-timer';
+            if (palindromeState.timeLeft <= 5) {
+                timerElement.classList.add('danger');
+            } else if (palindromeState.timeLeft <= 10) {
+                timerElement.classList.add('warning');
+            }
+        }
+
+        function updatePalindromeDisplay() {
+            document.getElementById('palindromeScore').textContent = palindromeState.score;
+            updatePalindromeTimerDisplay();
+        }
+
+        function clearPalindromeInput() {
             document.getElementById('palindromeInput').value = '';
             clearPalindromeResult();
         }
@@ -842,13 +997,23 @@
             resultDiv.className = 'palindrome-result';
         }
         
-        function showPalindromeResult(message, type) {
+        function showPalindromeResult(message, type, points = 0) {
             const resultDiv = document.getElementById('palindromeResult');
             const resultText = document.getElementById('palindromeResultText');
             
-            resultText.textContent = message;
+            let displayMessage = message;
+            if (points !== 0) {
+                displayMessage += ` (${points > 0 ? '+' : ''}${points} points)`;
+            }
+            
+            resultText.textContent = displayMessage;
             resultDiv.className = `palindrome-result ${type}`;
             resultDiv.style.opacity = '1';
+            
+            // Auto-hide result after 2 seconds
+            setTimeout(() => {
+                clearPalindromeResult();
+            }, 2000);
         }
         
         function isPalindrome(str) {
@@ -860,6 +1025,8 @@
         }
         
         function checkPalindrome() {
+            if (!palindromeState.isActive || palindromeState.isPaused) return;
+            
             const input = document.getElementById('palindromeInput').value.trim();
             
             // Check if input is empty
@@ -867,13 +1034,129 @@
                 showPalindromeResult('⚠️ Please enter something.', 'warning');
                 return;
             }
+
+            // Check minimum length (at least 3 characters for meaningful palindromes)
+            if (input.length < 2) {
+                showPalindromeResult('⚠️ Enter at least 2 characters.', 'warning');
+                return;
+            }
+
+            palindromeState.totalAttempts++;
+            
+            // Check if already found
+            const cleanedInput = input.toLowerCase().trim();
+            if (palindromeState.foundPalindromes.includes(cleanedInput)) {
+                showPalindromeResult('⚠️ Already found this one!', 'warning');
+                return;
+            }
             
             // Check if it's a palindrome
             if (isPalindrome(input)) {
-                showPalindromeResult('✅ It\'s a palindrome!', 'success');
+                palindromeState.score += 10;
+                palindromeState.correctCount++;
+                palindromeState.foundPalindromes.push(cleanedInput);
+                
+                showPalindromeResult('✅ Correct palindrome!', 'success', 10);
+                
+                // Add to found list
+                addToFoundList(input);
+                
+                // Clear input for next attempt
+                document.getElementById('palindromeInput').value = '';
             } else {
-                showPalindromeResult('❌ Not a palindrome.', 'error');
+                palindromeState.score -= 5;
+                palindromeState.wrongCount++;
+                
+                showPalindromeResult('❌ Not a palindrome.', 'error', -5);
+                
+                // Don't clear input so they can try to fix it
             }
+            
+            updatePalindromeDisplay();
+        }
+
+        function addToFoundList(palindrome) {
+            const container = document.getElementById('palindromeFoundContainer');
+            const palindromeDiv = document.createElement('div');
+            palindromeDiv.className = 'found-palindrome-item';
+            palindromeDiv.textContent = palindrome;
+            container.appendChild(palindromeDiv);
+        }
+
+        function endPalindromeChallenge() {
+            palindromeState.isActive = false;
+            stopPalindromeTimer();
+            
+            // Hide game content, show end screen
+            document.getElementById('palindromeGameContent').style.display = 'none';
+            document.getElementById('palindromeEndScreen').style.display = 'block';
+            
+            // Update final stats
+            document.getElementById('palindromeFinalScore').textContent = palindromeState.score;
+            document.getElementById('palindromeCorrectCount').textContent = palindromeState.correctCount;
+            document.getElementById('palindromeWrongCount').textContent = palindromeState.wrongCount;
+            document.getElementById('palindromeTotalAttempts').textContent = palindromeState.totalAttempts;
+            
+            // Update performance message
+            const performance = document.getElementById('palindromePerformance');
+            let message = '';
+            if (palindromeState.score >= 80) {
+                message = '🏆 Palindrome Master! Outstanding performance!';
+            } else if (palindromeState.score >= 50) {
+                message = '🎯 Excellent work! You know your palindromes!';
+            } else if (palindromeState.score >= 20) {
+                message = '👍 Good job! Keep practicing!';
+            } else if (palindromeState.score >= 0) {
+                message = '💪 Nice try! You\'ll do better next time!';
+            } else {
+                message = '🤔 Tough round! Remember: level, radar, madam...';
+            }
+            performance.textContent = message;
+            
+            // Check and update high score
+            updatePalindromeHighScore();
+        }
+
+        function loadPalindromeHighScore() {
+            const highScore = localStorage.getItem('palindromeChallengeHighScore') || '0';
+            document.getElementById('palindromeHighScore').textContent = highScore;
+        }
+
+        function updatePalindromeHighScore() {
+            const currentHighScore = parseInt(localStorage.getItem('palindromeChallengeHighScore') || '0');
+            if (palindromeState.score > currentHighScore) {
+                localStorage.setItem('palindromeChallengeHighScore', palindromeState.score.toString());
+                document.getElementById('palindromeHighScore').textContent = palindromeState.score;
+                
+                // Show new high score message
+                const performance = document.getElementById('palindromePerformance');
+                performance.innerHTML = '🎉 NEW HIGH SCORE! 🎉<br>' + performance.textContent;
+            }
+        }
+
+        function resetPalindromeState() {
+            palindromeState = {
+                isActive: false,
+                isPaused: false,
+                timeLeft: 30,
+                score: 0,
+                correctCount: 0,
+                wrongCount: 0,
+                totalAttempts: 0,
+                timer: null,
+                foundPalindromes: []
+            };
+            
+            // Reset pause button
+            const pauseBtn = document.getElementById('palindromePauseBtn');
+            if (pauseBtn) {
+                pauseBtn.textContent = '⏸️ Pause';
+                pauseBtn.style.background = 'rgba(0, 0, 0, 0.6)';
+            }
+            
+            // Enable input elements
+            document.getElementById('palindromeInput').disabled = false;
+            document.getElementById('checkPalindromeBtn').disabled = false;
         }
         
         // Add Enter key support for palindrome input
