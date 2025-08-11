@@ -1030,24 +1030,12 @@ body {
     }
     
     .progress-ring {
-        width: 150px;
-        height: 150px;
+        width: 180px;
+        height: 180px;
     }
     
-    .progress-ring circle {
-        r: 65;
-        cx: 75;
-        cy: 75;
-    }
-    
-    .progress-bg,
-    .progress-bar {
-        stroke-dasharray: 408.41;
-    }
-    
-    .progress-bar {
-        stroke-dashoffset: 408.41;
-    }
+    /* Keep the SVG circles with original dimensions - don't override them */
+    /* The HTML has cx="100" cy="100" r="90" and stroke-dasharray="565.48" which should work */
     
     .stats {
         grid-template-columns: 1fr;
@@ -1213,17 +1201,9 @@ body {
     .chat-section,
     .study-section {
         padding: 0.8rem;
-        background: rgba(13, 13, 35, 0.9) !important;
-        border: 1px solid rgba(0, 255, 255, 0.2) !important;
     }
     
-    /* Ensure timer display is visible on mobile */
-    .timer-display {
-        color: #00ffff !important;
-        font-size: 1.8rem !important;
-        font-weight: bold !important;
-        text-shadow: 0 0 20px rgba(0, 255, 255, 0.5) !important;
-    }
+    /* Let timer display use the original styling from the main CSS */
     
     .progress-ring {
         width: 140px;
@@ -1231,21 +1211,7 @@ body {
         margin: 1rem auto 1.5rem;
     }
     
-    .progress-ring circle {
-        r: 55;
-        cx: 70;
-        cy: 70;
-        stroke-width: 6;
-    }
-    
-    .progress-bg,
-    .progress-bar {
-        stroke-dasharray: 314.16; /* 2 * π * 50 */
-    }
-    
-    .progress-bar {
-        stroke-dashoffset: 314.16;
-    }
+    /* Keep original SVG circle dimensions from HTML - don't override them */
     
     .timer-display {
         font-size: 1.5rem;
