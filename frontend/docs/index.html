@@ -7,28 +7,360 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>StudyPal AI</title>
-    <link rel="stylesheet" href="./style.css?v=1.1">
+    <link rel="stylesheet" href="./style.css?v=3.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Force dark theme on mobile -->
+    <!-- Ultra-aggressive mobile theme enforcement -->
     <style>
-        @media (max-width: 600px) {
-            body, html {
-                background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%) !important;
+        /* Highest specificity mobile fix for GitHub Pages */
+        html[data-mobile="true"] body,
+        html body,
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%) !important;
+            color: #e0e0e0 !important;
+            min-height: 100vh !important;
+        }
+        
+        /* Multiple background layers for maximum coverage */
+        html::before, html::after, body::before, body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%) !important;
+            z-index: -1000;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 1200px) {
+            /* Ultra-high specificity for mobile */
+            html body .container,
+            html body .main-content,
+            html body .chat-section,
+            html body .study-section,
+            body .container,
+            body .main-content,
+            body .chat-section,
+            body .study-section {
+                background: rgba(15, 15, 35, 0.8) !important;
+                border: 1px solid #00f5ff !important;
+                border-radius: 15px !important;
+                box-shadow: 0 0 30px rgba(0, 245, 255, 0.2) !important;
+                color: #e0e0e0 !important;
+                backdrop-filter: blur(10px) !important;
+            }
+            
+            html body .study-section,
+            body .study-section {
+                border-color: #39ff14 !important;
+                box-shadow: 0 0 30px rgba(57, 255, 20, 0.2) !important;
+            }
+            
+            /* Timer ring fixes with ultra-high specificity */
+            html body .progress-ring,
+            body .progress-ring {
+                width: 160px !important;
+                height: 160px !important;
+                margin: 1rem auto !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+            
+            html body .progress-ring svg,
+            body .progress-ring svg {
+                width: 100% !important;
+                height: 100% !important;
+            }
+            
+            html body .progress-ring circle,
+            body .progress-ring circle {
+                stroke-width: 8 !important;
+            }
+            
+            html body .progress-bg,
+            body .progress-bg {
+                stroke: rgba(0, 245, 255, 0.3) !important;
+            }
+            
+            html body .progress-bar,
+            body .progress-bar {
+                stroke: #00f5ff !important;
+                stroke-linecap: round !important;
+            }
+            
+            html body .timer-display,
+            body .timer-display {
+                color: #00ffff !important;
+                font-size: 2rem !important;
+                font-weight: bold !important;
+                text-shadow: 0 0 20px rgba(0, 255, 255, 0.8) !important;
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                z-index: 10 !important;
+            }
+            
+            /* Stat cards */
+            html body .stat-card,
+            body .stat-card {
+                background: rgba(0, 0, 0, 0.7) !important;
+                border: 1px solid #39ff14 !important;
+                color: #e0e0e0 !important;
+                box-shadow: 0 0 15px rgba(57, 255, 20, 0.2) !important;
+                border-radius: 10px !important;
+            }
+            
+            html body .stat-value,
+            body .stat-value {
+                color: #39ff14 !important;
+                text-shadow: 0 0 10px rgba(57, 255, 20, 0.5) !important;
+            }
+            
+            /* Chat input */
+            html body .chat-input input,
+            body .chat-input input {
+                background: rgba(0, 0, 0, 0.5) !important;
+                border: 1px solid #00f5ff !important;
+                color: #e0e0e0 !important;
+                border-radius: 25px !important;
+            }
+            
+            /* Animated background */
+            html body .animated-background,
+            body .animated-background {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                z-index: -10 !important;
+                pointer-events: none !important;
+            }
+            
+            html body .particle,
+            body .particle {
+                opacity: 0.6 !important;
+                animation: float 6s ease-in-out infinite !important;
+            }
+        }
+        
+        /* iPad specific */
+        @media (max-width: 1024px) and (min-width: 768px) {
+            html body .progress-ring,
+            body .progress-ring {
+                width: 180px !important;
+                height: 180px !important;
+            }
+            
+            html body .timer-display,
+            body .timer-display {
+                font-size: 2.2rem !important;
+            }
+        }
+        
+        /* iPhone specific */
+        @media (max-width: 767px) {
+            html body .progress-ring,
+            body .progress-ring {
+                width: 140px !important;
+                height: 140px !important;
+            }
+            
+            html body .timer-display,
+            body .timer-display {
+                font-size: 1.8rem !important;
+            }
+            
+            html body .progress-ring circle,
+            body .progress-ring circle {
+                stroke-width: 6 !important;
+            }
+        }
+    </style>
+    
+    <!-- JavaScript force styling for mobile browsers -->
+    <script>
+        // Force mobile styling immediately
+        (function() {
+            // Mark as mobile for CSS targeting
+            document.documentElement.setAttribute('data-mobile', 'true');
+            
+            // Force dark background with JavaScript
+            const forceStyles = () => {
+                document.body.style.background = 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)';
+                document.body.style.color = '#e0e0e0';
+                document.body.style.minHeight = '100vh';
+                document.documentElement.style.background = '#0a0a0a';
+                
+                // Force container styling
+                const containers = document.querySelectorAll('.container, .main-content, .chat-section, .study-section');
+                containers.forEach(el => {
+                    el.style.background = 'rgba(15, 15, 35, 0.8)';
+                    el.style.border = '1px solid #00f5ff';
+                    el.style.borderRadius = '15px';
+                    el.style.boxShadow = '0 0 30px rgba(0, 245, 255, 0.2)';
+                    el.style.backdropFilter = 'blur(10px)';
+                });
+                
+                // Force study section styling
+                const studySections = document.querySelectorAll('.study-section');
+                studySections.forEach(el => {
+                    el.style.borderColor = '#39ff14';
+                    el.style.boxShadow = '0 0 30px rgba(57, 255, 20, 0.2)';
+                });
+                
+                // Force timer display styling
+                const timerDisplays = document.querySelectorAll('.timer-display');
+                timerDisplays.forEach(el => {
+                    el.style.color = '#00ffff';
+                    el.style.textShadow = '0 0 20px rgba(0, 255, 255, 0.8)';
+                });
+                
+                // Force stat card styling
+                const statCards = document.querySelectorAll('.stat-card');
+                statCards.forEach(el => {
+                    el.style.background = 'rgba(0, 0, 0, 0.7)';
+                    el.style.border = '1px solid #39ff14';
+                    el.style.boxShadow = '0 0 15px rgba(57, 255, 20, 0.2)';
+                });
+                
+                // Force stat value styling
+                const statValues = document.querySelectorAll('.stat-value');
+                statValues.forEach(el => {
+                    el.style.color = '#39ff14';
+                    el.style.textShadow = '0 0 10px rgba(57, 255, 20, 0.5)';
+                });
+            };
+            
+            // Apply immediately and on DOM ready
+            forceStyles();
+            document.addEventListener('DOMContentLoaded', forceStyles);
+            window.addEventListener('load', forceStyles);
+            
+            // Reapply periodically for persistent enforcement
+            setInterval(forceStyles, 1000);
+        })();
+    </script>
+                font-weight: bold !important;
+                text-shadow: 0 0 20px rgba(0, 255, 255, 0.8) !important;
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+            }
+            
+            /* Force stat cards styling */
+            .stat-card {
+                background: rgba(0, 0, 0, 0.7) !important;
+                border: 1px solid #39ff14 !important;
+                color: #e0e0e0 !important;
+                box-shadow: 0 0 15px rgba(57, 255, 20, 0.2) !important;
+            }
+            
+            .stat-value {
+                color: #39ff14 !important;
+                text-shadow: 0 0 10px rgba(57, 255, 20, 0.5) !important;
+            }
+            
+            /* Force chat input styling */
+            .chat-input input {
+                background: rgba(0, 0, 0, 0.5) !important;
+                border: 1px solid #00f5ff !important;
                 color: #e0e0e0 !important;
             }
-            .container, .chat-section, .study-section {
-                background: rgba(13, 13, 35, 0.9) !important;
-                border: 1px solid rgba(0, 255, 255, 0.3) !important;
+            
+            /* Force all text to be visible */
+            .motivation-text {
+                color: #39ff14 !important;
+                text-shadow: 0 0 10px rgba(57, 255, 20, 0.5) !important;
             }
+            
+            /* Ensure animated background particles are visible */
+            .animated-background {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                z-index: -10 !important;
+                pointer-events: none !important;
+            }
+            
+            .particle {
+                opacity: 0.8 !important;
+                animation: float 6s ease-in-out infinite !important;
+            }
+        }
+        
+        /* iPad specific fixes */
+        @media (max-width: 1024px) and (min-width: 768px) {
+            .progress-ring {
+                width: 180px !important;
+                height: 180px !important;
+            }
+            
+            .timer-display {
+                font-size: 2.2rem !important;
+            }
+        }
+        
+        /* iPhone specific fixes */
+        @media (max-width: 767px) {
             .progress-ring {
                 width: 140px !important;
                 height: 140px !important;
             }
+            
+            .timer-display {
+                font-size: 1.8rem !important;
+            }
+            
+            .progress-ring circle {
+                stroke-width: 6 !important;
+            }
+        }
+    </style>
+                color: #e0e0e0 !important;
+            }
+            
+            .stat-card, .game-card, .chat-messages, .chat-input {
+                background: rgba(0, 0, 0, 0.4) !important;
+                border: 1px solid rgba(0, 255, 255, 0.2) !important;
+                color: #e0e0e0 !important;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            /* Enhanced progress ring for maximum mobile visibility */
+            .progress-ring {
+                width: 180px !important;
+                height: 180px !important;
+                margin: 1.5rem auto 2rem !important;
+            }
+            .progress-ring svg {
+                filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.8)) drop-shadow(0 0 25px rgba(0, 255, 255, 0.4)) !important;
+            }
+            .progress-ring circle {
+                stroke-width: 10 !important;
+            }
+            .progress-bg {
+                stroke: rgba(0, 255, 255, 0.6) !important;
+                filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.3)) !important;
+            }
+            .progress-bar {
+                stroke: #00ffff !important;
+                stroke-linecap: round !important;
+                filter: drop-shadow(0 0 12px rgba(0, 255, 255, 1)) drop-shadow(0 0 20px rgba(0, 255, 255, 0.6)) !important;
+            }
             .timer-display {
                 color: #00ffff !important;
-                font-size: 1.8rem !important;
-                text-shadow: 0 0 20px rgba(0, 255, 255, 0.5) !important;
+                font-size: 2rem !important;
+                font-weight: bold !important;
+                text-shadow: 0 0 25px rgba(0, 255, 255, 1), 0 0 40px rgba(0, 255, 255, 0.5) !important;
             }
         }
     </style>
@@ -78,16 +410,16 @@
         <div class="study-section">
             <div class="timer-container">
                 <div class="progress-ring">
-                    <svg>
+                    <svg viewBox="0 0 180 180" width="180" height="180">
                         <defs>
                             <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
                                 <stop offset="0%" style="stop-color:#00f5ff"/>
                                 <stop offset="100%" style="stop-color:#39ff14"/>
                             </linearGradient>
                         </defs>
-                        <circle class="progress-bg" cx="100" cy="100" r="90"/>
-                        <circle class="progress-bar" cx="100" cy="100" r="90" 
-                                stroke-dasharray="565.48" stroke-dashoffset="565.48" id="progressBar"/>
+                        <circle class="progress-bg" cx="90" cy="90" r="80"/>
+                        <circle class="progress-bar" cx="90" cy="90" r="80" 
+                                stroke-dasharray="502.6" stroke-dashoffset="502.6" id="progressBar"/>
                     </svg>
                     <div class="timer-display" id="timerDisplay">00:00</div>
                 </div>
